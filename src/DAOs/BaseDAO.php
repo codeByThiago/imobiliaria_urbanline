@@ -18,21 +18,21 @@ class BaseDAO extends Database {
     }
 
 
-    public function create(array $data) {
-        try {
+    // public function create(array $data) {
+    //     try {
 
-        } catch (PDOException $e) {
-            throw new Exception('Erro ao criar: ' . $e->getMessage());
-        }
-    }
+    //     } catch (PDOException $e) {
+    //         throw new Exception('Erro ao criar: ' . $e->getMessage());
+    //     }
+    // }
 
-    public function update(array $data) {
-        try {
+    // public function update(array $data) {
+    //     try {
             
-        } catch (PDOException $e) {
-            throw new Exception('Erro ao atualizar: ' . $e->getMessage());
-        }
-    }
+    //     } catch (PDOException $e) {
+    //         throw new Exception('Erro ao atualizar: ' . $e->getMessage());
+    //     }
+    // }
 
     public function listAll() : ?array {
         try {
