@@ -14,6 +14,9 @@ use Controllers\AuthController;
 
 Autoload::register();
 
+if(session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '', '/');
 
@@ -32,6 +35,12 @@ try {
             $userController->index();
             break;
             
+        case 'user/google-login':
+            $authController->googleLogin();
+            break;
+        case 'user/google-callback':
+            $authController->googleCallback();
+            break;
         case 'login':
             // O login precisa diferenciar GET (exibir form) de POST (processar login)
             if ($_SERVER['REQUEST_METHOD'] === 'GET') {

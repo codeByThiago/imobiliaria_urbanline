@@ -23,7 +23,7 @@
     $endereco = $stmt_ender->fetch(PDO::FETCH_ASSOC);
 
     // Consulta 4: Proprietário do Imóvel
-    $sql_query_proprietario = "SELECT * FROM usuarios WHERE id = ? AND role_id = 2 LIMIT 1";
+    $sql_query_proprietario = "SELECT * FROM users WHERE id = ? AND role_id = 2 LIMIT 1";
     $stmt_proprietario = $conn->prepare($sql_query_proprietario);
     $stmt_proprietario->execute([$imovel['usuario_id']]);
 

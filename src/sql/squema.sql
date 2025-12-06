@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS urbanline_banco;
-use urbanline_banco;
+CREATE DATABASE IF NOT EXISTS urbanline_imoveis;
+use urbanline_imoveis;
 -- ROLES
 
 CREATE TABLE IF NOT EXISTS roles (
@@ -25,7 +25,7 @@ INSERT INTO permissoes (nome, descricao) VALUES
 ('cadastrar_imovel', 'Pode cadastrar novos imóveis'),
 ('editar_imovel', 'Pode editar imóveis'),
 ('deletar_imovel', 'Pode deletar imóveis'),
-('gerenciar_usuarios', 'Pode criar, editar e excluir usuários');
+('gerenciar_users', 'Pode criar, editar e excluir usuários');
 
 -- ========================================
 -- 4. RELACIONAR PERMISSÕES COM ROLES
@@ -65,16 +65,18 @@ CREATE TABLE IF NOT EXISTS endereco(
 
 -- USUÁRIOS E MENSAGENS
 
-CREATE TABLE IF NOT EXISTS usuarios (
+CREATE TABLE IF NOT EXISTS users (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   nome VARCHAR(100) NOT NULL,
   email VARCHAR(200) NOT NULL UNIQUE,
-  senha VARCHAR(255) DEFAULT NULL,
   telefone VARCHAR(20),
   cpf VARCHAR(14) UNIQUE,
-  foto_url VARCHAR(255),
+  picture VARCHAR(255),
   role_id INT UNSIGNED NOT NULL DEFAULT 1,
   endereco_id INT UNSIGNED DEFAULT NULL,
+  google_id VARCHAR(255) DEFAULT NULL,
+  auth_type ENUM('local', 'google') DEFAULT 'local',
+  password VARCHAR(255) DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY(id),
@@ -93,18 +95,28 @@ CREATE TABLE IF NOT EXISTS mensagens (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  FOREIGN KEY (remetente_id) REFERENCES usuarios(id) ON DELETE SET NULL,
-  FOREIGN KEY (destinatario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+  FOREIGN KEY (remetente_id) REFERENCES users(id) ON DELETE SET NULL,
+  FOREIGN KEY (destinatario_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS email_changes (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id INT UNSIGNED NOT NULL,
+  new_email VARCHAR(255) NOT NULL,
+  token_hash VARCHAR(255) NOT NULL,
+  expires_at DATETIME NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS password_resets (
-  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  usuario_id INT UNSIGNED NOT NULL,
-  token VARCHAR(255) NOT NULL UNIQUE,
-  expire_at TIMESTAMP NOT NULL,
-  usado BOOLEAN DEFAULT FALSE,
-  PRIMARY KEY(id),
-  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id INT UNSIGNED NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  token_hash VARCHAR(255) NOT NULL,
+  expires_at DATETIME NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- IMÓVEIS
@@ -130,7 +142,7 @@ CREATE TABLE IF NOT EXISTS imoveis (
   data_cad TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY(id),
-  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (usuario_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (endereco_id) REFERENCES endereco(id) ON DELETE CASCADE ON UPDATE CASCADE,
   INDEX (quant_quartos),
   INDEX (quant_suites),

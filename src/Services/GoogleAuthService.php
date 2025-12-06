@@ -10,9 +10,9 @@ class GoogleAuthService {
 
     public function __construct() {
         $this->client = new GoogleClient();
-        $this->client->setClientId($_ENV['GOOGLE_CLIENT_ID']);
-        $this->client->setClientSecret($_ENV['GOOGLE_CLIENT_SECRET']);
-        $this->client->setRedirectUri($_ENV['GOOGLE_REDIRECT_URI']);
+        $this->client->setClientId($_ENV['CLIENT_ID']);
+        $this->client->setClientSecret($_ENV['CLIENT_SECRET']);
+        $this->client->setRedirectUri($_ENV['REDIRECT_URI']);
         $this->client->addScope('openid');
         $this->client->addScope('email');
         $this->client->addScope('profile');

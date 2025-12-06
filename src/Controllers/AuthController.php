@@ -18,7 +18,7 @@ class AuthController {
 
     public function showLoginForm() {
         if(!isset($_SESSION['user_id'])) {
-            require_once (VIEWS . 'user/login.php');
+            require_once (VIEWS . 'auth/login.php');
         } else {
             $_SESSION['error_message'] = "Você já está logado!";
             header('Location: /');
@@ -117,7 +117,7 @@ class AuthController {
             $user = $this->userDAO->getByEmail($googleUser['email']);
 
             if (!$user) {
-                $this->userDAO->create(['google_id' => $googleUser['id'], 'auth_type' => 'google', 'name' => $googleUser['name'], 'email' => $googleUser['email'], 'picture' => $googleUser['picture']]);
+                $this->userDAO->create(['google_id' => $googleUser['id'], 'auth_type' => 'google', 'nome' => $googleUser['name'], 'email' => $googleUser['email'], 'picture' => $googleUser['picture']]);
             } else {
                 $this->userDAO->update($user['id'], ['google_id' => $googleUser['id'], 'auth_type' => 'google', 'picture' => $googleUser['picture']]);
             }
@@ -125,11 +125,9 @@ class AuthController {
             $user = $this->userDAO->getByEmail($googleUser['email']);
             $_SESSION['logado'] = TRUE;
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['name'];
+            $_SESSION['username'] = $user['nome'];
             $_SESSION['sucess_message'] = 'Login realizado com sucesso!';
             header('Location: /');
-
-            // header('Location: /');
 
         } catch (Exception $e) {
             throw new Exception("Erro de Autenticação: " . $e->getMessage());
