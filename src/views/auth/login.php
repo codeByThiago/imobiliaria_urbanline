@@ -40,7 +40,7 @@
                     <label for="remind-me">Lembrar-me neste dispositivo</label>
                 </div>
                 <button type="submit" class="auth-submit-btn">Entrar</button>
-                <button type="button" id="auth-google-btn" class="auth-google-btn"><i class="fa-solid fa-google" id='eye-confirme-senha'></i> Logar com Google</button>
+                <a href="/user/google-login" class="google-btn"><i class="fa-brands fa-google"></i> Entrar com Google</a>
                 <p>Esqueceu a senha? <a href="esqueceu-senha.php">Clique aqui.</a></p>
                 <p>Não possui cadastro? <a href="cadastro.php">Cadastre-se</a></p>
             </form>

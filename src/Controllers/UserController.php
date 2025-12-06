@@ -2,10 +2,10 @@
 
 namespace Controllers;
 
-use Models\Usuario;
-use DAOs\UsuarioDAO;
+use Models\User;
 use Models\Endereco;
 use DAOs\EnderecoDAO;
+use DAOs\UserDAO;
 use Exception;
 
 // --- Helper de View (Simulação) ---
@@ -29,12 +29,12 @@ function renderView(string $viewName, array $data = []): void {
     }
 }
 
-class UsuarioController {
+class UserController {
     private EnderecoDAO $enderecoDAO;
-    private UsuarioDAO $usuarioDAO;
+    private UserDAO $userDAO;
 
     public function __construct() {
-        $this->usuarioDAO = new UsuarioDAO();
+        $this->userDAO = new UserDAO();
         $this->enderecoDAO = new EnderecoDAO();
     }
 
@@ -43,6 +43,10 @@ class UsuarioController {
         renderView('user/home');
     }
     
+    public function dashboard() {
+        renderView('user/dashboard');
+    }
+
     public function errorPage404() {
         renderView('user/404');
     }
@@ -70,7 +74,7 @@ class UsuarioController {
             ];
 
             $endereco = new Endereco($enderecoData);
-            $enderecoId = $this->enderecoDAO->create($endereco);
+            $enderecoId = $this->enderecoDAO->create($endereco->toArray());
 
             $userData = [
                 'nome' => $data['nome'] ?? '',
@@ -83,12 +87,12 @@ class UsuarioController {
                 ];
 
 
-            $usuario = new Usuario($userData);
+            $usuario = new User($userData);
             if (!empty($data['senha'])) {
                 $usuario->setSenha($data['senha']);
             }
 
-            $userId = $this->usuarioDAO->create($usuario);
+            $userId = $this->userDAO->create($usuario->toArray());
             
             $_SESSION['success_message'] = "Usuário cadastrado com sucesso! ID: {$userId}";
             header('Location: /');

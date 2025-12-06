@@ -1,21 +1,23 @@
 <header>
     <nav class="navbar" aria-label="Barra de Navegação Principal">
         <div class="menu-responsivo">
-            <div class="navbar-brand">
-                <img class="logo" src="assets/img/icones/logo_sem_fundo2.png">
-                <h1>Urbanline Imóveis</h1>
-            </div>
+            <a href="/">
+                <div class="navbar-brand">
+                    <img class="logo" src="assets/img/icones/logo_sem_fundo2.png">
+                    <h1>Urbanline Imóveis</h1>
+                </div>
+            </a>
             <div class="navbar-menu">
                 <i class="fa-solid fa-bars" id="menu"></i>
             </div>
         </div>
         <ul class="navbar-items">
-            <li class="navbar-link"><a href="index.php">Início</a></li>
-            <li class="navbar-link"><a href="procura-imoveis.php">Procurar Imóvel</a></li>
+            <li class="navbar-link"><a href="/">Início</a></li>
+            <li class="navbar-link"><a href="/search">Procurar Imóvel</a></li>
             <?php
 
                 if(isset($_SESSION['logado']) && $_SESSION['logado'] === TRUE) {
-                    echo '<li class="navbar-link"><a href="../logout">Sair da conta</a></li>';
+                    echo '<li class="navbar-link"><a href="/logout">Sair da conta</a></li>';
                     echo '<i class="fa-solid fa-comment"></i>';
                     echo "<img src='assets/img/icones/default-user.jpg' style='border-radius: 50%; width: 30px;' alt='Foto do Usuário'>";
                 } else {

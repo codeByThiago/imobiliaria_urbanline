@@ -1,24 +1,28 @@
 <?php 
 
-class Imovel {
-    private $id;
-    private $nome;
-    private $usuario_id;
-    private $endereco_id;
-    private $tipo_imovel;
-    private $valor;
-    private $area;
-    private $descricao;
-    private $quant_quartos;
-    private $quant_suites;
-    private $quant_cozinhas;
-    private $quant_banheiros;
-    private $quant_piscinas;
-    private $vagas_garagem;
-    private $status;
-    private $mobiliado;
-    private $data_cad;
-    private $data_atualizacao;
+namespace Models;
+
+use DAOs\ImoveisDAO;
+
+class Imoveis {
+    private ?int $id;
+    private string $nome;
+    private ?int $usuario_id;
+    private ?int $endereco_id;
+    private string $tipo_imovel;
+    private float $valor;
+    private float $area;
+    private string $descricao;
+    private int $quant_quartos;
+    private int $quant_suites;
+    private int $quant_cozinhas;
+    private int $quant_banheiros;
+    private int $quant_piscinas;
+    private int $vagas_garagem;
+    private string $status;
+    private bool $mobiliado;
+    private string $data_cad;
+    private string $data_atualizacao;
 
     // GETTERS E SETTERS
 
@@ -82,6 +86,55 @@ class Imovel {
     public function getDataAtualizacao() { return $this->data_atualizacao; }
     
     // Funcões e Métodos Importantes
+    public function toArray() : array {
+        return [
+            'id' => $this->id,
+            'nome' => $this->nome,
+            'usuario_id' => $this->usuario_id,
+            'endereco_id' => $this->endereco_id,
+            'tipo_imovel' => $this->tipo_imovel,
+            'valor' => $this->valor,
+            'area' => $this->area,
+            'descricao' => $this->descricao,
+            'quant_quartos' => $this->quant_quartos,
+            'quant_suites' => $this->quant_suites,
+            'quant_cozinhas' => $this->quant_cozinhas,
+            'quant_banheiros' => $this->quant_banheiros,
+            'quant_piscinas' => $this->quant_piscinas,
+            'vagas_garagem' => $this->vagas_garagem,
+            'status' => $this->status,
+            'mobiliado' => $this->mobiliado,
+            'data_cad' => $this->data_cad,
+            'data_atualizacao' => $this->data_atualizacao,
+        ];
+    }
+
+    public function save() : int|bool {
+        
+        $imoveisDAO = new ImoveisDAO();
+
+        $data = $this->toArray();
+        $id = $this->getId();
+
+        if ($id === null) {
+            // --- CREATE (Inserir) ---
+            $newId = $imoveisDAO->create($data);
+            
+            // É crucial atualizar o ID do objeto após a inserção
+            $this->setId($newId);
+            return $newId;
+            
+        } else {
+            // --- UPDATE (Atualizar) ---
+            
+            // O update do BaseDAO exige o ID e os dados
+            
+            // Remove o ID do array de dados para não tentar atualizar a PK
+            unset($data['id']); 
+            
+            return $imoveisDAO->update($id, $data);
+        }
+    }
 }
 
 ?>

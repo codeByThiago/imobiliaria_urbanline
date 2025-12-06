@@ -1,18 +1,22 @@
 <?php 
 
+namespace Models;
+
+use DAOs\ImovelFotosDAO;
+
 class ImovelFotos {
-    private $id;
-    private $imovel_id;
-    private $url;
-    private $destaque;
+    private ?int $id;
+    private ?int $imovel_id;
+    private string $url;
+    private bool $destaque;
 
     // GETTERS E SETTERS
 
     public function __construct($data = []) {
-        $this->id = $data['id'];
-        $this->imovel_id = $data['imovel_id'];
-        $this->url = $data['url'];
-        $this->destaque = $data['destaque'];
+        $this->id = $data['id'] ?? null;
+        $this->imovel_id = $data['imovel_id'] ?? null;
+        $this->url = $data['url'] ?? '';
+        $this->destaque = $data['destaque'] ?? false;
     }
 
     public function setId($id) { return $this->id = $id; }
@@ -25,6 +29,33 @@ class ImovelFotos {
     public function getUrl() { return $this->url; }
     public function getDestaque() { return $this->destaque; }
 
+    public function toArray() : array {
+        return [
+            'id' => $this->id,
+            'imovel_id' => $this->imovel_id,
+            'url' => $this->url,
+            'destaque' => $this->destaque 
+        ];
+    }
+    
+    public function save() : int|bool {
+        $imovelFotosDAO = new ImovelFotosDAO();
+        
+        $data = $this->toArray();
+        $id = $this->getId();
+        
+        if ($id === null) {
+            // --- CREATE (Inserir) ---
+            $newId = $imovelFotosDAO->create($data);
+            $this->setId($newId);
+            return $newId;
+            
+        } else {
+            // --- UPDATE (Atualizar) ---
+            unset($data['id']); 
+            return $imovelFotosDAO->update($id, $data);
+        }
+    }
 }
 
 ?>

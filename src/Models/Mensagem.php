@@ -1,28 +1,32 @@
 <?php 
 
+namespace Models;
+
+use DAOs\MensagemDAO;
+
 class Mensagem {
-    private $id;
-    private $remetente_id;
-    private $destinatario_id;
-    private $titulo;
-    private $mensagem;
-    private $link;
-    private $lida;
-    private $created_at;
-    private $updated_at;
+    private ?int $id;
+    private ?int $remetente_id;
+    private ?int $destinatario_id;
+    private string $titulo;
+    private string $mensagem;
+    private string $link;
+    private bool $lida;
+    private string $created_at;
+    private string $updated_at;
     
     // GETTERS E SETTERS
 
     public function __construct($data = []) {
-        $this->id = $data['id'];
-        $this->remetente_id = $data['remetente_id'];
-        $this->destinatario_id = $data['destinatario_id'];
-        $this->titulo = $data['titulo'];
-        $this->mensagem = $data['mensagem'];
-        $this->link = $data['link'];
-        $this->lida = $data['lida'];
-        $this->created_at = $data['created_at'];
-        $this->updated_at = $data['updated_at'];
+        $this->id = $data['id'] ?? null;
+        $this->remetente_id = $data['remetente_id'] ?? null;
+        $this->destinatario_id = $data['destinatario_id'] ?? null;
+        $this->titulo = $data['titulo'] ?? '';
+        $this->mensagem = $data['mensagem'] ?? '';
+        $this->link = $data['link'] ?? '';
+        $this->lida = $data['lida'] ?? false;
+        $this->created_at = $data['created_at'] ?? '';
+        $this->updated_at = $data['updated_at'] ?? '';
     }
 
     public function setId($id) { return $this->id = $id; }
@@ -44,6 +48,40 @@ class Mensagem {
     public function getLida() { return $this->lida; }
     public function getCreatedAt() { return $this->created_at; }
     public function getUpdatedAt() { return $this->updated_at; }
+
+    public function toArray() : array {
+        return [
+            'id' => $this->id,
+            'remetente_id' => $this->remetente_id,
+            'destinatario_id' => $this->destinatario_id,
+            'titulo' => $this->titulo,
+            'mensagem' => $this->mensagem,
+            'link' => $this->link,
+            'lida' => $this->lida,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at
+        ];
+    }
+
+    public function save() : int|bool {
+        $mensagemDAO = new MensagemDAO();
+
+        $data = $this->toArray();
+        $id = $this->getId();
+
+        if ($id === null) {
+            // --- CREATE (Inserir) ---
+            $newId = $mensagemDAO->create($data);
+            $this->setId($newId);
+            return $newId;
+            
+        } else {
+            // --- UPDATE (Atualizar) ---
+            unset($data['id']); 
+            
+            return $mensagemDAO->update($id, $data);
+        }
+    }
 }
 
 ?>

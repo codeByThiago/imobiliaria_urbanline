@@ -1,12 +1,12 @@
-<?php 
+<?php
 
 namespace DAOs;
 
 use DAOs\BaseDAO;
-class EnderecoDAO extends BaseDAO {
 
+class ImoveisDAO extends BaseDAO {
     public function __construct() {
-        parent::__construct('endereco');
+        parent::__construct('imoveis');
     }
 }
 

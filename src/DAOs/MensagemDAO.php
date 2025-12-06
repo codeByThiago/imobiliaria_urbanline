@@ -1,15 +1,12 @@
 <?php 
 
-class MensagemDAO {
-    private $id;
-    private $remetente_id;
-    private $destinatario_id;
-    private $titul;
-    private $mensagem;
-    private $link;
-    private $lida;
-    private $created_at;
-    private $updated_at;
-}
+namespace DAOs;
 
+use DAOs\BaseDAO;
+
+class MensagemDAO extends BaseDAO {
+    public function __construct() {
+        parent::__construct('mensagem');
+    }
+}
 ?>

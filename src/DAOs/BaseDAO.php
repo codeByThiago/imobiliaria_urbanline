@@ -2,74 +2,116 @@
 
 namespace DAOs;
 
-use Config\Database;
+use Core\Database;
 use Exception;
-use PDOException;
 use PDO;
+use PDOException;
 
-class BaseDAO extends Database {
-    protected PDO $conn;
-    protected string $table;
+abstract class BaseDAO extends Database {
+    public string $table;
+    public PDO $conexao;
 
     public function __construct(string $table) {
         parent::__construct();
-        $this->conn = $this->getConnection();
+        $this->conexao = parent::getConnection();
         $this->table = $table;
     }
 
+    public function create(array $data) : int {
+        try {
+            if(isset($data['id'])) {
+                unset($data['id']);
+            }
 
-    // public function create(array $data) {
-    //     try {
+            $columns = implode(', ', array_keys($data));
+            $placeholders = implode(', ', array_map(fn($dado) => ":$dado", array_keys($data)));
 
-    //     } catch (PDOException $e) {
-    //         throw new Exception('Erro ao criar: ' . $e->getMessage());
-    //     }
-    // }
+            $sql = "INSERT INTO {$this->table} ($columns) VALUES($placeholders)";
 
-    // public function update(array $data) {
-    //     try {
-            
-    //     } catch (PDOException $e) {
-    //         throw new Exception('Erro ao atualizar: ' . $e->getMessage());
-    //     }
-    // }
+            echo $sql . "<br>";
+
+
+            $stmt = $this->conexao->prepare($sql);
+
+            foreach ($data as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+
+            $stmt->execute();
+            return $newId = $this->conexao->lastInsertId();
+
+        } catch (Exception $e) {
+            throw new Exception("Erro ao inserir dado na tabela {$this->table}: " . $e->getMessage());
+        }
+    }
 
     public function listAll() : ?array {
         try {
             $sql = "SELECT * FROM {$this->table}";
-
-            $stmt = $this->conn->prepare($sql);
+            $stmt = $this->conexao->prepare($sql);
             $stmt->execute();
+            
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $data ? : null;
+        } catch (PDOException $e) {
+            throw new Exception("Erro ao selecionar dados de {$this->table}: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function update(int $id, array $data) : bool {
+        try {
+            if(empty($data)) {
+                throw new Exception("Nenhum dado foi enviado para atualizar");
+            }
+
+            if(isset($data['id'])) {
+                unset($data['id']);
+            }
+            
+            $setValues = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($data)));
+
+            $sql = "UPDATE {$this->table} SET {$setValues} WHERE id = :id";
+            $stmt = $this->conexao->prepare($sql);
+
+            $stmt->bindValue(':id', $id);
+            
+            echo $sql . '<br>';
+            foreach ($data as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+                echo ":$key", $value . '<br>';
+            }
+
+            return $stmt->execute();
 
         } catch (PDOException $e) {
-            throw new Exception('Erro ao listar: ' . $e->getMessage());
+            throw new Exception("Erro ao atualizar: " . $e->getMessage());
         }
     }
 
     public function selectById(int $id) : ?array {
         try {
-            $sql = "SELECT * FROM {$this->table} WHERE id = ?";
+            $sql = "SELECT * FROM {$this->table} WHERE id = :id LIMIT 1";
+            $stmt = $this->conexao->prepare($sql);
+            $stmt->bindValue(":id", $id);
+            $stmt->execute();
 
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$id]);
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-            return $result ? : null;
-            
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $data ? : null;
         } catch (PDOException $e) {
             throw new Exception("Erro ao selecionar por ID: " . $e->getMessage());
-            return null;
         }
     }
 
-    public function delete(int $id): bool {
+    public function delete(int $id) : bool {
         try {
             $sql = "DELETE FROM {$this->table} WHERE id = ?";
-            $stmt = $this->conn->prepare($sql);
+            $stmt = $this->conexao->prepare($sql);
             return $stmt->execute([$id]);
+
         } catch (PDOException $e) {
-            throw new Exception('Erro ao deletar: ' . $e->getMessage());
+            throw new Exception("Erro ao deletar dado da tabela {$this->table}: " . $e->getMessage());
+            return false;
         }
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Models;
 
-class Usuario {
+use DAOs\UserDAO;
+
+class User {
     private ?int $id;
     private string $nome;
     private string $email;
@@ -16,7 +18,14 @@ class Usuario {
         $this->id = $data['id'] ?? null;
         $this->nome = $data['nome'] ?? '';
         $this->email = $data['email'] ?? '';
-        $this->senha = $data['senha'] ?? '';
+        
+        // Aplica o setter para garantir o hashing da senha no construct
+        if (isset($data['senha'])) {
+             $this->setSenha($data['senha']);
+        } else {
+            $this->senha = '';
+        }
+        
         $this->telefone = $data['telefone'] ?? '';
         $this->cpf = $data['cpf'] ?? '';
         $this->role_id = $data['role_id'] ?? 1;
@@ -59,6 +68,45 @@ class Usuario {
     public function verificarSenha(string $senhaDigitada): bool {
         return password_verify($senhaDigitada, $this->senha);
     }
-}
 
+    public function toArray() : array {
+        return [
+            'id' => $this->id,
+            'nome' => $this->nome,
+            'email' => $this->email,
+            'senha' => $this->senha,
+            'telefone' => $this->telefone,
+            'cpf' => $this->cpf,
+            'role_id' => $this->role_id,
+            'endereco_id' => $this->endereco_id
+        ];
+    }
+
+    public function save() : int|bool {
+        // 1. Instancia o DAO
+        $userDAO = new UserDAO();
+        
+        // 2. Obtém os dados do objeto em formato de array
+        $data = $this->toArray();
+        $id = $this->getId();
+        
+        // 3. Verifica se é CREATE ou UPDATE
+        if ($id === null) {
+            // --- CREATE (Inserir) ---
+            $newId = $userDAO->create($data);
+            
+            // É crucial atualizar o ID do objeto após a inserção
+            $this->setId($newId);
+            
+            return $newId;
+            
+        } else {
+            unset($data['id']); 
+            
+            return $userDAO->update($id, $data);
+        }
+    }
+}
 ?>
+
+<!-- ----------------- FEITO -----------------  -->

@@ -1,20 +1,15 @@
 <?php
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+include dirname(__FILE__, 2) . "/src/Core/Autoload.php";
+include dirname(__FILE__, 2) . "/src/Core/Config.php";
+require_once __DIR__ . '/../vendor/autoload.php';
 
-
-// require __DIR__ . '/../vendor/autoload.php';
-// $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
-// $dotenv->load();
-
-require_once "../src/Config/Config.php";
-require_once "../src/Config/Autoload.php";
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 
 // Namespaces, Inclusões e Autoload
-use Config\Autoload;
-use Controllers\UsuarioController;
+use Core\Autoload;
+use Controllers\UserController;
 use Controllers\AuthController;
 
 Autoload::register();
@@ -27,14 +22,14 @@ if (empty($uri)) {
     $uri = '/';
 }
 
-$usuarioController = new UsuarioController();
+$userController = new UserController();
 $authController = new AuthController();
 
 try {
     switch ($uri) {
         
         case '/':
-            $usuarioController->index();
+            $userController->index();
             break;
             
         case 'login':
@@ -55,16 +50,17 @@ try {
             
         case 'cadastro':
             if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-                $usuarioController->showRegisterForm();
+                $userController->showRegisterForm();
             } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $usuarioController->register();
+                $userController->register();
             }
             break;
 
         // case 'esqueci-senha':
             // break;
-        // case 'dashboard':
-            // break;
+        case 'dashboard':
+            $userController->dashboard();
+            break;
         // case user/adicionar-imovel:
             // break;
         // case user/dashboard;
@@ -72,7 +68,7 @@ try {
         // case 'user/config':
             // break;
         default:
-            $usuarioController->errorPage404();
+            $userController->errorPage404();
             exit();
     }
 } catch (Exception $e) {
