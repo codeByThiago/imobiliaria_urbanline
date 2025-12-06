@@ -1,0 +1,101 @@
+/* NAVBAR PADRAO */
+
+.navbar {
+    color: var(--text-light);
+    background-color: var(--bg-dark);
+    padding: 20px;
+    
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    gap: 20px;
+    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.445);
+}
+
+.menu-responsivo { 
+    display: flex; 
+    justify-content: space-between; 
+} 
+
+.navbar-brand { 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+} 
+
+.navbar-brand .logo { 
+    /* Ajustado para tema claro/escuro */
+    filter: invert(var(--text-light)); 
+    width: 40px; 
+} 
+
+.navbar-menu i { 
+    color: var(--text-light);
+    padding: 10px; 
+    border-radius: 5px; 
+    font-size: 1.5em; 
+    cursor: pointer; 
+    transition: all .3s ease; 
+} 
+
+.navbar-menu i:hover { 
+    font-size: 1.5em; 
+    background-color: var(--bg-secondary); /* Usa um tom secundário para hover */
+    color: var(--accent-gold); 
+} 
+
+.navbar-items { 
+    display: none; 
+    flex-flow: column nowrap; 
+    gap: 30px; 
+    list-style: none; 
+} 
+
+.navbar-items.active { 
+    display: flex; 
+} 
+
+.navbar-link { 
+    padding-left: 15px; 
+} 
+
+.navbar-link a { 
+    color: var(--text-light); 
+    text-decoration: none; 
+    transition: all .3s ease; 
+} 
+
+.navbar-link a:hover { 
+    text-decoration: underline; 
+    color: var(--accent-gold); 
+} 
+
+@media only screen and (min-width: 768px){
+    .navbar {
+        justify-content: space-between;
+        align-items: center;
+        flex-flow: row nowrap;
+        gap: 0;
+    }
+    
+    body.inicial .navbar {
+        gap: 0;
+        background-color: transparent;
+        box-shadow: none;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        z-index: 3;
+    }
+
+    .navbar-items {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+    }
+
+    .navbar-menu {
+        display: none;
+    }
+}

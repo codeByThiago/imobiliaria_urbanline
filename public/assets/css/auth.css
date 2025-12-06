@@ -1,0 +1,294 @@
+body {
+  min-height: 100vh;
+  font: normal 1em Arial, sans-serif;
+  background: url("../img/carrosel/carrosel-1.jpg") center center no-repeat
+    fixed;
+  background-size: cover;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-padrao);
+  font-size: 0.9em;
+}
+
+section.auth {
+  position: relative;
+  margin: 20px;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+  width: 90vw;
+  max-width: 400px;
+  overflow: hidden;
+  border-radius: 5px;
+  display: grid;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: -1;
+}
+
+#welcome-content {
+  display: none;
+  flex-flow: column nowrap;
+  gap: 20px;
+  justify-content: space-between;
+  padding: 30px;
+  color: var(--accent-gold);
+  background-color: var(--bg-dark);
+}
+
+#welcome-content div {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 10px;
+  padding-bottom: 60px;
+}
+
+#welcome-content div > h1 {
+  font-family: var(--font-chamativa);
+  font-weight: 700;
+  font-size: 5em;
+}
+
+.logo-icon {
+  width: 100px;
+  height: 100px;
+  filter: invert(50%);
+}
+
+#auth-form {
+  background-color: var(--bg-accent);
+  color: var(--text-light);
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 20px;
+  padding: 50px 30px;
+  height: 100%;
+}
+
+#auth-form h2 {
+  font-size: 1.6em;
+  color: var(--accent-gold);
+  text-align: center;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 15px;
+  padding-left: 40px;
+  border-radius: 30px;
+  border: 2px solid var(--bg-accent-light);
+  background-color: transparent;
+  color: var(--text-light);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.input-wrapper input:focus {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+}
+
+.input-wrapper input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.input-wrapper i {
+  position: absolute;
+  color: var(--text-muted);
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.input-group input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--text-light);
+  border-radius: 4px;
+  background-color: var(--bg-accent);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* Ao marcar */
+.input-group input[type="checkbox"]:checked {
+  background-color: var(--accent-gold);
+  border-color: var(--accent-gold);
+}
+
+/* Adicionando o checkmark */
+.input-group input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  width: 5px;
+  height: 10px;
+  border: solid var(--bg-dark);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Hover */
+.input-group input[type="checkbox"]:hover {
+  border-color: var(--accent-gold-hover);
+}
+
+.auth-submit-btn {
+  padding: 15px;
+  border-radius: 50px;
+  border: none;
+  background-color: var(--bg-secondary);
+  color: var(--text-light);
+  font-weight: bolder;
+  width: 100px;
+  align-self: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  transform: scale(1);
+}
+
+.auth-submit-btn:hover {
+  background-color: var(--bg-dark);
+  color: var(--accent-gold);
+  transform: scale(1.05);
+}
+
+a {
+  color: var(--accent-gold);
+  text-decoration: none;
+  transition: color 0.5s ease;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: var(--accent-gold-hover);
+}
+
+.form-step {
+  display: none;
+  flex-flow: column nowrap;
+  gap: 20px;
+}
+
+.form-step.active {
+  display: flex; /* Garante que apenas a etapa ativa é um flex container */
+}
+
+/* Estilos da Barra de Progresso */
+#barra {
+  width: 100%;
+  height: 11px;
+  background-color: #ccc; /* Cor de fundo da barra */
+  padding: 0; /* Removendo padding */
+  border-radius: 5px;
+  overflow: hidden; /* Importante para o progresso interno */
+}
+
+#progresso {
+  width: 0%;
+  height: 100%; /* Ocupa a altura total de #barra */
+  background-color: green;
+  border-radius: 5px 0 0 5px;
+  transition: width 0.3s linear;
+}
+
+.progress-bar {
+  /* Novo container para texto e barra */
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.auth-submit-btn,
+.prev-step-btn {
+  display: none;
+}
+
+.prev-step-btn,
+.next-step-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.prev-step-btn {
+  background-color: var(--bg-dark);
+  color: white;
+}
+
+.prev-step-btn:hover {
+  background-color: #d5d5d5;
+}
+
+.next-step-btn {
+  background-color: var(--accent-gold);
+  color: white;
+}
+
+.next-step-btn:hover {
+  background-color: var(--accent-gold-hover);
+}
+
+.eye-password-viewer-btn {
+  position: absolute;
+  right: 45px;
+  top: 50%;
+  transform: translateY(-50%); /* Centraliza verticalmente */
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media only screen and (min-width: 768px) {
+  section.auth {
+    max-width: 800px;
+    grid-template: 1fr / 60% 1fr;
+  }
+  #welcome-content {
+    display: flex;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  section.auth {
+    max-width: 1000px;
+    grid-template-areas: "form welcome";
+    grid-template-columns: 1fr 60%;
+  }
+  #auth-form {
+    grid-area: form;
+  }
+  #welcome-content {
+    grid-area: welcome;
+  }
+}

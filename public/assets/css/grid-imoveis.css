@@ -1,0 +1,211 @@
+
+/* ===== CONTAINER PRINCIPAL ===== */
+.procura-imoveis {
+    display: grid;
+    gap: 20px;
+    margin: 20px;
+}
+
+/* ===== TÍTULO E SEARCH ===== */
+.titulo {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.titulo h1 {
+    font-family: var(--font-chamativa);
+    font-size: 2.5em;
+    font-weight: bold;
+    color: var(--accent-gold);
+    margin-bottom: 10px;
+}
+
+.titulo input#search-input {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--bg-accent-light);
+    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.268);
+    background-color: transparent;
+    color: var(--text-light);
+    width: 80%;
+    max-width: 400px;
+}
+
+.titulo input#search-input::placeholder {
+    color: var(--bg-accent-light);
+}
+
+.filtros {
+    position: sticky;
+    display: flex;
+    flex-flow: column nowrap;
+    padding: 20px;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    border-radius: 12px;
+    height: fit-content;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.filtros form {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 15px;
+}
+
+.form-control {
+    display: flex;
+    flex-flow: column;
+    gap: 5px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gold);
+}
+
+.form-control select {
+    background-color: var(--bg-secondary);
+    color: var(--text-light);
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--bg-accent-light);
+    box-shadow: inset 1px 1px 4px rgba(0, 0, 0, 0.2);
+    appearance: none;
+    transition: all 0.2s ease;
+}
+
+.form-control select:hover {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 6px rgba(224, 169, 109, 0.5);
+    cursor: pointer;
+}
+
+.form-control option {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+}
+
+/* Botão procurar */
+#procurar-imovel-btn {
+    padding: 10px;
+    border: none;
+    color: var(--bg-dark);
+    font-weight: bold;
+    border-radius: 25px;
+    background-color: var(--accent-gold);
+    width: 120px;
+    margin: 20px auto 0;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease;
+}
+
+#procurar-imovel-btn:hover {
+    background-color: var(--gold);
+    transform: scale(1.05);
+}
+
+/* ===== GRID DE IMÓVEIS ===== */
+.grid-imoveis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+/* ===== CARDS ===== */
+.card-imovel {
+    position: relative;
+    display: flex;
+    flex-flow: column nowrap;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease;
+}
+
+.card-imovel:hover {
+    transform: translateY(-4px);
+}
+
+.card-imovel img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+span.status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border-radius: 6px;
+    padding: 5px 10px;
+    color: white;
+    font-weight: bold;
+    font-size: 0.8em;
+}
+
+span.status.disponivel {
+    background-color: limegreen;
+}
+
+span.status.alugado {
+    background-color: orange;
+}
+
+span.status.vendido {
+    background-color: red;
+}
+
+.info {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 8px;
+    padding: 16px;
+}
+
+.acoes {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.acoes a {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--text-light);
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.acoes .ver-detalhes {
+    background-color: var(--bg-accent);
+}
+
+.acoes .ver-detalhes:hover {
+    background-color: var(--bg-accent-light);
+}
+
+.acoes .contato {
+    background-color: var(--bg-accent-light);
+}
+
+.acoes .contato:hover {
+    background-color: var(--bg-accent);
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media only screen and (min-width: 764px) {
+    .procura-imoveis {
+        grid-template-columns: 280px 1fr; /* Sidebar + Grid */
+        align-items: start;
+    }
+
+    .grid-imoveis {
+        grid-template-columns: repeat(autofit, minmax(500px, 1fr));
+    }
+}
