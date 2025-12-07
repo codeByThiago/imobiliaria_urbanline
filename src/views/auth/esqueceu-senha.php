@@ -10,6 +10,7 @@
     <title>Urbanline Imóveis - Login</title>
 </head>
 <body>
+    <?php include VIEWS . 'includes/alert.php';?>
     <section class="auth">
         <div id="welcome-content">
             <img src="assets/img/icones/logo_sem_fundo2.png" class="logo-icon" alt="Logo Urbanline Imóveis">

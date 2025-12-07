@@ -12,8 +12,8 @@
 <body class="inicial">
 
 <?php include VIEWS . 'includes/navbar.php';?>
+<?php include VIEWS . 'includes/alert.php';?>
 
-<body>
     <main>
         <section class="background-image-container">
             <img src="assets/img/carrosel/carrosel-1.jpg" alt="Fundo animado" class="background-image active">

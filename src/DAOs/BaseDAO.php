@@ -52,10 +52,13 @@ abstract class BaseDAO extends Database {
             $stmt->execute();
             
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return $data ? : null;
+            
+            // Retorna o array de dados se existir, ou null se estiver vazio.
+            return $data ? : null; 
+            
         } catch (PDOException $e) {
-            throw new Exception("Erro ao selecionar dados de {$this->table}: " . $e->getMessage());
-            return null;
+            // Lança a exceção para que o Controller/Service possa tratá-la.
+            throw new \Exception("Erro ao selecionar dados de {$this->table}: " . $e->getMessage(), (int)$e->getCode(), $e);
         }
     }
 

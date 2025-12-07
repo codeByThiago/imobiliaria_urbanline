@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use DAOs\EnderecoDAO;
 use Services\GoogleAuthService;
 use Models\User;
 use DAOs\UserDAO;
@@ -9,95 +10,125 @@ use Exception;
 
 class AuthController {
     private UserDAO $userDAO;
+    private EnderecoDAO $enderecoDAO;
     private GoogleAuthService $googleAuthService;
 
     public function __construct() {
         $this->userDAO = new UserDAO();
+        $this->enderecoDAO = new EnderecoDAO();
         $this->googleAuthService = new GoogleAuthService;
     }
 
-    public function showLoginForm() {
-        if(!isset($_SESSION['user_id'])) {
-            require_once (VIEWS . 'auth/login.php');
-        } else {
-            $_SESSION['error_message'] = "Você já está logado!";
+    public function showLoginForm() : void {
+        renderView('auth/login');
+    }
+
+    public function login() : void {
+        $email = $_POST['email'] ?? '';
+        $senha = $_POST['senha'] ?? '';
+
+        if (empty($email) || empty($senha)) {
+            $_SESSION['error_message'] = 'Por favor, preencha todos os campos.';
+            header('Location: /login');
+            exit;
+        }
+        
+        $user = $this->userDAO->getByEmail($email);
+        
+        if ($user && password_verify($senha, $user['senha'])) {
+            $_SESSION['logado'] = TRUE;
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['nome'];
+            $_SESSION['user_picture'] = 'assets/uploads/user/' . $user['picture'] ?? null;
+            $_SESSION['success_message'] = 'Login realizado com sucesso!';
             header('Location: /');
-        }
-    }
-
-    public function login() {
-        if($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $dataUser = [
-                'name' => $_POST['nome'] ?? '',
-                'password' => $_POST['senha'] ?? '',
-                'email' => $_POST['email'] ?? '',
-            ];
-
-            $usuario = $this->userDAO->getByEmail($dataUser['email']);
-            if(is_array($usuario)) {
-                if($dataUser['email'] == $usuario['email'] && password_verify($dataUser['password'], $usuario['password'])) {
-                    $_SESSION['logado'] = TRUE;
-                    $_SESSION['user_id'] = $usuario['id'];
-                    $_SESSION['username'] = $usuario['name'];
-                    $_SESSION['sucess_message'] = 'Login realizado com sucesso!';
-                    header('Location: /');
-                } else {
-                    $_SESSION['error_message'] = 'Email ou senha incorretos. Tente novamente!';
-                    header('Location: /login');
-                }
-            } else {
-                $_SESSION['error_message'] = 'Email ou senha incorretos. Tente novamente!';
-                header('Location: /login');
-            }
-        }
-    }
-
-    public function showCadastroForm() {
-        if(!isset($_SESSION['user_id'])) {
-            require_once (VIEWS . 'user/cadastro.php');
+            exit;
         } else {
-            $_SESSION['error_message'] = "Você já está logado! Por favor saia da conta caso queira cadastrar outro email.";
-            header('Location: /');
-        }
-    }
-
-    public function cadastro() {
-        if($_SERVER['REQUEST_METHOD'] === 'POST') {
-            
-            $dataUser = [
-                'name' => $_POST['nome'] ?? '',
-                'password' => $_POST['senha'] ?? '',
-                'email' => $_POST['email'] ?? '',
-            ];
-
-            if ($_POST['senha'] !== $_POST['confirme-senha']) {
-                $_SESSION['error_message'] = "As senhas não coincidem.";
-                header('Location: /cadastro');
-                exit;
-            } else {
-                $user = new User($dataUser);
-                $newId = $this->userDAO->create($user->toArray());
-
-                $user->setId($newId);
-
-                $_SESSION['sucess_message'] = 'Seja bem vindo, ' . $dataUser['name'] . '. Você se cadastrou com sucesso!';
-                header('Location: /login');
-            }
-
+            $_SESSION['error_message'] = 'Email ou senha inválidos.';
+            header('Location: /login');
+            exit;
         }
     }
 
     public function logout() : void {
-        if(session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        $_SESSION = [];
-
         session_unset();
         session_destroy();
-
         header('Location: /');
+        exit;
+    }
+
+    public function showCadastroForm() : void {
+        renderView('auth/cadastro');
+    }
+
+    public function cadastro() : void {
+        
+        // 1. Lógica de Validação de Email (mantida)
+        $email = $this->userDAO->getByEmail($_POST['email'] ?? '');
+        if ($email && ($_POST['auth_type'] ?? 'local') === 'local') { 
+            // Se o email existe E o tipo de auth é local, bloqueia.
+            $_SESSION['error_message'] = 'Email já cadastrado.';
+            header('Location: /cadastro');
+            exit;
+        }
+        
+        // 2. Coleta de dados (Incluindo os campos ocultos do Google, se existirem)
+        $isSocial = ($_POST['auth_type'] ?? 'local') === 'google';
+        
+        // Se for cadastro social, a senha não é obrigatória, mas precisamos
+        // de um hash VAZIO ou de um valor NULO, dependendo do seu modelo User.
+        // Usaremos um hash vazio (um valor seguro) para contas sociais, 
+        // ou a senha se for local.
+        $senha_post = $_POST['senha'] ?? null;
+        $senha_final = $isSocial ? 'SOCIAL_ACCOUNT' : $senha_post; 
+
+        // O Model User deve lidar com o hash, mas passamos a senha/marcador
+        $userData = [
+            'nome' => $_POST['nome'] ?? '',
+            'email' => $_POST['email'] ?? '',
+            // Use a senha normal para local, ou o marcador para social (o Model User lida com isso)
+            'senha' => $senha_final, 
+            'telefone' => $_POST['telefone'] ?? '',
+            'cpf' => $_POST['cpf'] ?? '',
+            'role_id' => 1,
+            'auth_type' => $_POST['auth_type'] ?? 'local',
+            'google_id' => $_POST['google_id'] ?? null, // Recebe do campo hidden
+            'picture' => $_POST['picture'] ?? null // Recebe do campo hidden
+        ];
+
+        $enderecoData = [
+            'cep' => $_POST['cep'] ?? '',
+            'uf' => $_POST['uf'] ?? '',
+            'cidade' => $_POST['cidade'] ?? '',
+            'bairro' => $_POST['bairro'] ?? '',
+            'logradouro' => $_POST['logradouro'] ?? '',
+            'numero' => $_POST['numero'] ?? ''
+        ];
+
+        try {
+            // 3. Salva Endereço
+            $endereco_id = $this->enderecoDAO->create($enderecoData);
+            $userData['endereco_id'] = $endereco_id;
+        
+            // 4. Salva Usuário
+            $user = new User($userData);
+            $user->save();
+        
+            // 5. Limpa a sessão social e faz login
+            unset($_SESSION['social_register_data']);
+            $_SESSION['success_message'] = 'Cadastro realizado com sucesso!';
+            $_SESSION['logado'] = TRUE;
+            $_SESSION['user_id'] = $user->getId();
+            $_SESSION['user_picture'] = $user->getPicture() ?? null;
+            $_SESSION['username'] = $user->getNome();
+            header('Location: /');
+            exit;
+        } catch (\Exception $e) {
+            error_log("Erro no cadastro de usuário: " . $e->getMessage());
+            $_SESSION['error_message'] = 'Erro ao finalizar o cadastro. Tente novamente.';
+            header('Location: /cadastro');
+            exit;
+        }
     }
 
     public function googleLogin() {
@@ -113,24 +144,51 @@ class AuthController {
             }
 
             $googleUser = $this->googleAuthService->getUserFromCode($_GET['code']);
-
             $user = $this->userDAO->getByEmail($googleUser['email']);
 
             if (!$user) {
-                $this->userDAO->create(['google_id' => $googleUser['id'], 'auth_type' => 'google', 'nome' => $googleUser['name'], 'email' => $googleUser['email'], 'picture' => $googleUser['picture']]);
+                // --- NOVO FLUXO: Usuário Google NOVO ou INCOMPLETO ---
+                
+                // 1. Armazena os dados do Google temporariamente na sessão
+                $_SESSION['social_register_data'] = [
+                    'nome' => $googleUser['name'] ?? '',
+                    'email' => $googleUser['email'],
+                    'google_id' => $googleUser['id'],
+                    'auth_type' => 'google',
+                    'picture' => $googleUser['picture'] ?? null
+                ];
+                
+                // 2. Redireciona para o formulário de cadastro com um indicador
+                $_SESSION['warning_message'] = '<p>⚠️ <b>Dados Incompletos!</b></p><p>Obrigado por se registrar com o Google. Por favor, complete os campos <b>Telefone, CPF</b> e <b>Endereço</b> para finalizar seu cadastro.</p>';
+                header('Location: /cadastro?social=google');
+                exit;
+                
             } else {
-                $this->userDAO->update($user['id'], ['google_id' => $googleUser['id'], 'auth_type' => 'google', 'picture' => $googleUser['picture']]);
+                // --- Usuário Google EXISTENTE ---
+                
+                // 1. Atualiza dados (como google_id e foto)
+                $this->userDAO->update($user['id'], [
+                    'google_id' => $googleUser['id'], 
+                    'auth_type' => 'google', 
+                    'picture' => $googleUser['picture'] ?? $user['picture']
+                ]);
+                
+                // 2. Faz login (pode ser necessário buscar o usuário atualizado)
+                $user = $this->userDAO->getByEmail($googleUser['email']);
+                $_SESSION['logado'] = TRUE;
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['nome'];
+                $_SESSION['user_picture'] = $user['picture'] ?? null;
+                $_SESSION['success_message'] = 'Login realizado com sucesso!';
+                header('Location: /');
+                exit;
             }
 
-            $user = $this->userDAO->getByEmail($googleUser['email']);
-            $_SESSION['logado'] = TRUE;
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['nome'];
-            $_SESSION['sucess_message'] = 'Login realizado com sucesso!';
-            header('Location: /');
-
         } catch (Exception $e) {
-            throw new Exception("Erro de Autenticação: " . $e->getMessage());
+            error_log("Erro de Autenticação com Google: " . $e->getMessage());
+            $_SESSION['error_message'] = 'Erro de Autenticação. Tente novamente.';
+            header('Location: /login');
+            exit;
         }
     }
 

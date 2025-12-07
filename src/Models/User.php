@@ -8,11 +8,14 @@ class User {
     private ?int $id;
     private string $nome;
     private string $email;
-    private string $senha;
+    private string $password;
     private string $telefone;
     private string $cpf;
+    private string $picture;
     private ?int $role_id;
     private ?int $endereco_id;
+    private string $google_id;
+    private string $auth_type;
 
     public function __construct(array $data = []) {
         $this->id = $data['id'] ?? null;
@@ -20,16 +23,19 @@ class User {
         $this->email = $data['email'] ?? '';
         
         // Aplica o setter para garantir o hashing da senha no construct
-        if (isset($data['senha'])) {
-             $this->setSenha($data['senha']);
+        if (isset($data['password'])) {
+             $this->setSenha($data['password']);
         } else {
-            $this->senha = '';
+            $this->password = '';
         }
         
         $this->telefone = $data['telefone'] ?? '';
         $this->cpf = $data['cpf'] ?? '';
+        $this->picture = $data['picture'] ?? '';
         $this->role_id = $data['role_id'] ?? 1;
         $this->endereco_id = $data['endereco_id'] ?? null;
+        $this->google_id = $data['google_id'] ?? '';
+        $this->auth_type = $data['auth_type'] ?? 'local';
     }
 
     // Setters e getters para o usuário
@@ -42,12 +48,12 @@ class User {
     public function getEmail(): string { return $this->email; }
     public function setEmail(string $email): void { $this->email = $email; }
 
-    public function getSenha(): string { return $this->senha; }
-    public function setSenha(string $senha): void {
-        if (!password_get_info($senha)['algo']) {
-            $this->senha = password_hash($senha, PASSWORD_DEFAULT);
+    public function getSenha(): string { return $this->password; }
+    public function setSenha(string $password): void {
+        if (!password_get_info($password)['algo']) {
+            $this->password = password_hash($password, PASSWORD_DEFAULT);
         } else {
-            $this->senha = $senha;
+            $this->password = $password;
         }
     }
 
@@ -56,6 +62,9 @@ class User {
 
     public function getCpf(): string { return $this->cpf; }
     public function setCpf(string $cpf): void { $this->cpf = $cpf; }
+
+    public function getPicture(): string { return $this->picture; }
+    public function setPicture(string $picture): void { $this->picture = $picture; }
 
     public function getRoleId(): ?int { return $this->role_id; }
     public function setRoleId(?int $role_id): void { $this->role_id = $role_id; }
@@ -66,7 +75,7 @@ class User {
 
     // Método para verificar senha
     public function verificarSenha(string $senhaDigitada): bool {
-        return password_verify($senhaDigitada, $this->senha);
+        return password_verify($senhaDigitada, $this->password);
     }
 
     public function toArray() : array {
@@ -74,11 +83,14 @@ class User {
             'id' => $this->id,
             'nome' => $this->nome,
             'email' => $this->email,
-            'senha' => $this->senha,
+            'password' => $this->password,
             'telefone' => $this->telefone,
             'cpf' => $this->cpf,
+            'picture' => $this->picture,
             'role_id' => $this->role_id,
-            'endereco_id' => $this->endereco_id
+            'endereco_id' => $this->endereco_id,
+            'google_id' => $this->google_id,
+            'auth_type' => $this->auth_type,
         ];
     }
 

@@ -3,6 +3,7 @@
 include dirname(__FILE__, 2) . "/src/Core/Autoload.php";
 include dirname(__FILE__, 2) . "/src/Core/Config.php";
 require_once __DIR__ . '/../vendor/autoload.php';
+include VIEWS . 'includes/funcoes.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
@@ -11,6 +12,7 @@ $dotenv->load();
 use Core\Autoload;
 use Controllers\UserController;
 use Controllers\AuthController;
+use Controllers\ImoveisController;
 
 Autoload::register();
 
@@ -27,6 +29,7 @@ if (empty($uri)) {
 
 $userController = new UserController();
 $authController = new AuthController();
+$imoveisController = new ImoveisController();
 
 try {
     switch ($uri) {
@@ -34,48 +37,32 @@ try {
         case '/':
             $userController->index();
             break;
-            
+        case 'search':
+            $imoveisController->search();
+            break;
+        case 'login':
+            if($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $authController->login();
+            } else {
+                $authController->showLoginForm();
+            }
+            break;
+        case 'cadastro':
+            if($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $authController->cadastro();
+            } else {
+                $authController->showCadastroForm();
+            }
+            break;
+        case 'logout':
+            $authController->logout();
+            break;
         case 'user/google-login':
             $authController->googleLogin();
             break;
         case 'user/google-callback':
             $authController->googleCallback();
             break;
-        case 'login':
-            // O login precisa diferenciar GET (exibir form) de POST (processar login)
-            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-                $authController->showLoginForm();
-            } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $authController->login();
-            } else {
-                http_response_code(405);
-                echo "Método Não Permitido.";
-            }
-            break;
-        
-        case 'logout':
-            $authController->logout();
-            break;
-            
-        case 'cadastro':
-            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-                $userController->showRegisterForm();
-            } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $userController->register();
-            }
-            break;
-
-        // case 'esqueci-senha':
-            // break;
-        case 'dashboard':
-            $userController->dashboard();
-            break;
-        // case user/adicionar-imovel:
-            // break;
-        // case user/dashboard;
-            // break;
-        // case 'user/config':
-            // break;
         default:
             $userController->errorPage404();
             exit();

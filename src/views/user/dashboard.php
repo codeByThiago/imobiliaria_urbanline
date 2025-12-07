@@ -10,6 +10,8 @@
 </head>
 <body>
     <?php include VIEWS . 'includes/navbar.php';?>
+    <?php include VIEWS . 'includes/alert.php';?>
+
     
     <nav class="main-menu">
         <ul>

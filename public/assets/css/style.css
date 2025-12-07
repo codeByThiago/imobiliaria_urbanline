@@ -52,3 +52,69 @@ body { font-size: 0.9em; font-family: var(--font-padrao); background-color: var(
     clip: rect(0, 0, 0, 0);
     border: 0;
 }
+
+
+/* Estilos Existentes */
+.alert {
+  position: fixed;
+  width: 200px;
+  top: 15px; /* Posição final da animação de entrada */
+  left: 50%;
+  z-index: 10000;
+  transform: translateX(-50%);
+  padding: 5px;
+  border-radius: 10px;
+  animation: animacao 0.5s forwards; /* Use forwards para manter o estado final */
+}
+
+/* Animação de Entrada (você tinha 'top: 15px;' em 100%, ajuste para 15px) */
+@keyframes animacao {
+  0% {
+    top: -50px; /* Começa mais alto */
+    opacity: 0;
+  }
+  100% {
+    top: 15px; /* Posição visível */
+    opacity: 1;
+  }
+}
+
+/* Novo Estilo para esconder o alerta */
+.alert.alert-hide {
+  animation: animacao-saida 0.5s forwards; /* Aplica a animação de saída */
+}
+
+/* Nova Animação de Saída (subindo) */
+@keyframes animacao-saida {
+  0% {
+    top: 15px; /* Começa na posição visível */
+    opacity: 1;
+  }
+  100% {
+    top: -50px; /* Sobe para fora da tela */
+    opacity: 0;
+  }
+}
+
+/* (Seus estilos .alert-sucess e .alert-error permanecem os mesmos) */
+.alert-sucess {
+  background-color: green;
+  color: white;
+}
+
+.alert-error {
+  background-color: red;
+  color: white;
+}
+
+span.status.disponivel {
+    background-color: green;
+}
+
+span.status.alugado {
+    background-color: orange;
+}
+
+span.status.vendido {
+    background-color: red;
+}

@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(200) NOT NULL UNIQUE,
   telefone VARCHAR(20),
   cpf VARCHAR(14) UNIQUE,
-  picture VARCHAR(255),
+  picture VARCHAR(255) DEFAULT 'default_user.png',
   role_id INT UNSIGNED NOT NULL DEFAULT 1,
   endereco_id INT UNSIGNED DEFAULT NULL,
   google_id VARCHAR(255) DEFAULT NULL,

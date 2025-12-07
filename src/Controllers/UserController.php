@@ -42,64 +42,12 @@ class UserController {
     public function index() {
         renderView('user/home');
     }
-    
+
     public function dashboard() {
         renderView('user/dashboard');
     }
 
     public function errorPage404() {
         renderView('user/404');
-    }
-    
-    public function showRegisterForm() : void {
-        renderView('auth/cadastro');
-    }
-
-    public function register(): void {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /cadastro');
-            return;
-        }
-        
-        try {
-            $data = $_POST;
-
-            $enderecoData = [
-                'cep' => $data['cep'] ?? '',
-                'uf' => $data['uf'] ?? '',
-                'cidade' => $data['cidade'] ?? '',
-                'bairro' => $data['bairro'] ?? '',
-                'logradouro' => $data['logradouro'] ?? '',
-                'numero' => $data['numero'] ?? '',
-            ];
-
-            $endereco = new Endereco($enderecoData);
-            $enderecoId = $this->enderecoDAO->create($endereco->toArray());
-
-            $userData = [
-                'nome' => $data['nome'] ?? '',
-                'email' => $data['email'] ?? '',
-                'senha' => $data['senha'] ?? '', 
-                'telefone' => $data['telefone'] ?? '',
-                'cpf' => $data['cpf'] ?? '',
-                'role_id' => $data['role_id'] ?? 1,
-                'endereco_id' => $enderecoId ?? '',
-                ];
-
-
-            $usuario = new User($userData);
-            if (!empty($data['senha'])) {
-                $usuario->setSenha($data['senha']);
-            }
-
-            $userId = $this->userDAO->create($usuario->toArray());
-            
-            $_SESSION['success_message'] = "Usuário cadastrado com sucesso! ID: {$userId}";
-            header('Location: /');
-            
-        } catch (Exception $e) {
-            $_SESSION['error_message'] = "Erro ao cadastrar usuário: " . $e->getMessage();
-            header('Location: /cadastro'); 
-        }
     }
 }
