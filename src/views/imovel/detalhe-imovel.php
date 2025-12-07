@@ -1,35 +1,3 @@
-<?php
-    $imovel_id = $_GET['id'];
-
-    // Consulta 1: Pegar os dados do imóvel
-    $sql_query_imovel = "SELECT * FROM imoveis WHERE id = ? LIMIT 1";
-    $stmt_imovel = $conn->prepare($sql_query_imovel);
-    $stmt_imovel->execute([$imovel_id]); 
-    
-    $imovel = $stmt_imovel->fetch(PDO::FETCH_ASSOC);
-
-    // Consulta 2: Pegar as fotos do imóvel
-    $sql_query_fotos = "SELECT * FROM imovel_fotos WHERE imovel_id = ?";
-    $stmt_fotos = $conn->prepare($sql_query_fotos);
-    $stmt_fotos->execute([$imovel_id]);
-    
-    $fotos = $stmt_fotos->fetchAll(PDO::FETCH_ASSOC);
-
-    // Consulta 3: Endereço do Imóvel
-    $sql_query_ender = "SELECT * FROM endereco WHERE id = ? LIMIT 1";
-    $stmt_ender = $conn->prepare($sql_query_ender);
-    $stmt_ender->execute([$imovel['id']]);
-
-    $endereco = $stmt_ender->fetch(PDO::FETCH_ASSOC);
-
-    // Consulta 4: Proprietário do Imóvel
-    $sql_query_proprietario = "SELECT * FROM users WHERE id = ? AND role_id = 2 LIMIT 1";
-    $stmt_proprietario = $conn->prepare($sql_query_proprietario);
-    $stmt_proprietario->execute([$imovel['usuario_id']]);
-
-    $proprietario = $stmt_proprietario->fetch(PDO::FETCH_ASSOC);
-?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -43,6 +11,8 @@
 </head>
 <body>
 <body>
+    <?php include VIEWS . 'includes/navbar.php';?>
+    <?php include VIEWS . 'includes/alert.php';?>
     <section id="detalhe">
         <div class="container">
             <div class="carrosel-imovel">
@@ -106,7 +76,7 @@
                     <div class="proprietario-card">
                         <?php 
                             // Define o caminho da imagem: se 'foto_url' estiver vazio, usa 'default-user.jpg'
-                            $foto_proprietario = $proprietario['foto_url'] ?: 'default-user.jpg';
+                            $foto_proprietario = $proprietario['picture'] ?: 'default-user.jpg';
                         ?>
                         
                         <img src="assets/img/icones/<?= $foto_proprietario ?>" alt="Foto do Proprietário">

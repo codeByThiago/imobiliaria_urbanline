@@ -160,7 +160,7 @@
                         }
                         ?>
                         <div class="acoes">
-                            <a href="detalhe-imovel.php?id=<?= htmlspecialchars($imovel['id']) ?>" class="ver-detalhes">Ver Detalhes</a>
+                            <a href="detalhe-imovel?id=<?= htmlspecialchars($imovel['id']) ?>" class="ver-detalhes">Ver Detalhes</a>
                             <a href="" class="contato">Contato</a>
                         </div>
                     </div>

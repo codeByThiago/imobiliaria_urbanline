@@ -40,6 +40,9 @@ try {
         case 'search':
             $imoveisController->search();
             break;
+        case 'detalhe-imovel':
+            $imoveisController->detalheImovel();
+            break;
         case 'login':
             if($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $authController->login();
