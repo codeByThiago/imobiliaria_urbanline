@@ -1,16 +1,16 @@
 <?php 
 // O PHP permanece o mesmo
-if(isset($_SESSION['sucess_message'])) {
+if(isset($_SESSION['success_message'])) {
     // Adicione um ID e a classe 'js-alert' para facilitar a manipulação via JavaScript
-    echo "<div id='global-alert' class='alert alert-sucess js-alert'>✔️ {$_SESSION['sucess_message']}</div>";
-    unset($_SESSION['sucess_message']);
+    echo "<div id='global-alert' class='alert alert-success js-alert'>✔️ {$_SESSION['success_message']}</div>";
+    unset($_SESSION['success_message']);
 } 
 
 if(isset($_SESSION['error_message'])) {
     // Adicione um ID e a classe 'js-alert' para facilitar a manipulação via JavaScript
     echo "<div id='global-alert' class='alert alert-error js-alert'>⚠️ {$_SESSION['error_message']}</div>";
     unset($_SESSION['error_message']);
-}
+} 
 ?>
 
 <script>

@@ -11,15 +11,7 @@ use Exception;
 // --- Helper de View (Simulação) ---
 function renderView(string $viewName, array $data = []): void {
     extract($data);
-
-    // Exibe mensagens de sucesso/erro da sessão
-    if (isset($_SESSION['success_message'])) {
-        unset($_SESSION['success_message']);
-    }
-    if (isset($_SESSION['error_message'])) {
-        unset($_SESSION['error_message']);
-    }
-
+    
     $viewName = VIEWS . str_replace('\\', DIRECTORY_SEPARATOR, $viewName) . ".php";
 
     if (file_exists($viewName)) {

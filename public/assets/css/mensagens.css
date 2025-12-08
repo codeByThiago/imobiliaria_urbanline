@@ -1,0 +1,351 @@
+.mensagens-page {
+    padding: 40px 0;
+    min-height: calc(100vh - 120px); /* Ajustar de acordo com a altura real do navbar e footer */
+    background-color: var(--bg-body-fundo);
+}
+
+.mensagens-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+.mensagens-header {
+    margin-bottom: 20px;
+    padding-left: 10px;
+}
+
+.mensagens-header h2 {
+    font-family: var(--font-chamativa);
+    font-weight: 600;
+    color: var(--text-light);
+    font-size: 2em;
+}
+
+.mensagens-header p {
+    color: var(--text-muted);
+    font-size: 0.9em;
+}
+
+/* Content Container (Grid ou Flex) */
+.mensagens-content {
+    display: flex;
+    gap: 20px;
+    height: 70vh; /* Altura para fixar o scroll da lista */
+    min-height: 500px;
+}
+
+/* Inbox (Lista de Mensagens) */
+.inbox {
+    flex-basis: 350px; /* Largura fixa para a lista */
+    flex-shrink: 0;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Para garantir que apenas a lista role */
+}
+
+.inbox h3 {
+    font-size: 1.5em;
+    color: var(--accent-gold);
+    margin-bottom: 5px;
+}
+
+.inbox-subtitle {
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    font-size: 0.8em;
+}
+
+.mensagens-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto; /* Scroll para a lista de mensagens */
+    flex-grow: 1;
+}
+
+.mensagem-item {
+    margin-bottom: 8px;
+    background-color: var(--bg-secondary);
+    border: 1px solid transparent;
+    border-radius: 6px;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.mensagem-item:hover {
+    background-color: var(--bg-accent);
+}
+
+.mensagem-item.selected {
+    background-color: var(--bg-accent); /* Fundo sutil para o selecionado */
+    border-color: var(--accent-gold); /* Borda de destaque */
+}
+
+.mensagem-link {
+    display: flex;
+    text-decoration: none;
+    padding: 10px;
+    color: inherit;
+}
+
+.remetente-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--text-muted);
+    color: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.mensagem-item.nova .remetente-icon {
+    background-color: var(--accent-gold);
+    color: var(--bg-dark);
+}
+
+.mensagem-info {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.mensagem-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.remetente-nome {
+    font-weight: bold;
+    color: var(--text-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80%; /* Para evitar que o nome empurre a tag */
+}
+
+.tag-nova {
+    background-color: var(--accent-gold);
+    color: var(--bg-dark);
+    font-weight: bold;
+    font-size: 0.7em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.mensagem-titulo {
+    color: var(--text-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9em;
+    margin-top: 3px;
+}
+
+.mensagem-item.nova .mensagem-titulo {
+    font-weight: bold; /* Título em negrito se for nova */
+}
+
+.mensagem-data {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.75em;
+    margin-top: 3px;
+}
+
+.mensagem-vazia {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 20px 0;
+}
+
+/* Paginação */
+.paginacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid var(--bg-accent-light);
+    margin-top: auto; /* Empurra para o final do inbox */
+    font-size: 0.85em;
+    color: var(--text-muted);
+}
+
+.btn-paginacao {
+    text-decoration: none;
+    color: var(--accent-gold);
+    padding: 5px 10px;
+    border: 1px solid var(--accent-gold);
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-paginacao:hover {
+    background-color: var(--accent-gold);
+    color: var(--bg-dark);
+}
+
+/* Detalhe da Mensagem */
+.mensagem-detalhe {
+    flex-grow: 1;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Scroll para o corpo da mensagem, se necessário */
+}
+
+/* Placeholder Vazio */
+.placeholder-vazio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.placeholder-vazio img {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 15px;
+    /* Substituir por um ícone SVG ou ícone-fonte */
+}
+
+.placeholder-vazio p {
+    font-size: 1.1em;
+}
+
+/* Detalhe Header */
+.detalhe-header {
+    display: flex;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--bg-accent-light);
+    margin-bottom: 20px;
+}
+
+.detalhe-remetente-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--accent-gold);
+    color: var(--bg-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.detalhe-info {
+    flex-grow: 1;
+}
+
+.detalhe-info h3 {
+    font-size: 1.6em;
+    color: var(--text-light);
+    margin-bottom: 0;
+}
+
+.detalhe-remetente-nome {
+    font-size: 0.9em;
+    color: var(--text-muted);
+    margin-top: 3px;
+}
+
+.detalhe-data {
+    font-size: 0.8em;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* Detalhe Body */
+.detalhe-body p {
+    line-height: 1.6;
+    margin-bottom: 15px;
+    white-space: pre-wrap; /* Para respeitar quebras de linha no TEXT */
+}
+
+.detalhe-link {
+    margin-top: 20px;
+}
+
+.detalhe-link a {
+    color: var(--accent-gold);
+    text-decoration: underline;
+}
+
+/* Área de Resposta (Inspirado na Imagem 2) */
+.area-resposta {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--bg-accent-light);
+}
+
+.area-resposta textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 1px solid var(--bg-accent-light);
+    border-radius: 6px;
+    background-color: var(--bg-accent);
+    color: var(--text-light);
+    font-family: var(--font-padrao);
+    font-size: 0.9em;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.area-resposta textarea:focus {
+    border-color: var(--accent-gold);
+}
+
+.resposta-botoes {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-responder, .btn-cancelar {
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.2s, background-color 0.2s, color 0.2s;
+    border: none;
+}
+
+.btn-responder {
+    background-color: var(--accent-gold);
+    color: var(--bg-dark);
+}
+
+.btn-responder:hover {
+    background-color: var(--accent-gold-hover);
+}
+
+.btn-cancelar {
+    background-color: var(--bg-accent);
+    color: var(--text-muted);
+}
+
+.btn-cancelar:hover {
+    background-color: var(--bg-accent-light);
+}

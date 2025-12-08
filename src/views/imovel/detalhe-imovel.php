@@ -99,7 +99,7 @@
             <?php } ?>
         </div>
     </section>
-
+    <script src="assets/js/menu.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
         const wrapper = document.querySelector('.fotos-wrapper');

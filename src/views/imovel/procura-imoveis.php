@@ -39,18 +39,20 @@
                         <select name="status-imovel" id="status-imovel">
                             <option value="" <?= ($filters['status-imovel'] ?? '') === '' ? 'selected' : '' ?>>Todos</option>
                             
-                            <option value="venda" <?= ($filters['status-imovel'] ?? '') === 'venda' ? 'selected' : '' ?>>À venda</option>
+                            <option value="disponivel" <?= ($filters['status-imovel'] ?? '') === 'aluguel' ? 'selected' : '' ?>>Disponível</option>
                             
-                            <option value="em-construcao" <?= ($filters['status-imovel'] ?? '') === 'em-construcao' ? 'selected' : '' ?>>Em construção</option>
+                            <option value="vendido" <?= ($filters['status-imovel'] ?? '') === 'venda' ? 'selected' : '' ?>>Vendido</option>
                             
-                            <option value="aluguel" <?= ($filters['status-imovel'] ?? '') === 'aluguel' ? 'selected' : '' ?>>Aluguel</option>
+                            <option value="alugado" <?= ($filters['status-imovel'] ?? '') === 'alugado' ? 'selected' : '' ?>>Alugado</option>
+                            
                         </select>
                     </div>
 
                     <div class="form-control">
                         <label for="tipo">Tipo</label>
                         <select name="tipo" id="tipo">
-                            <option selected value="casa">Casa</option>
+                            <option selected value="">Todos</option>
+                            <option value="casa">Casa</option>
                             <option value="apartamento">Apartamento</option>
                             <option value="kitnet">Kitnet</option>
                             <option value="sobrado">Sobrado</option>
@@ -141,10 +143,23 @@
                     <?php endif; ?>
                     <div class="info">
                         <h3><?= htmlspecialchars($imovel['nome'])?></h3> 
-                        <span>Valor: R$ <?= number_format($imovel['valor'], 2, ',', '.') ?></span>
-                        <span>Quartos: <?= $imovel['quant_quartos'] ?></span>
-                        <span>Cozinhas: <?= $imovel['quant_cozinhas'] ?></span>
-                        <span>Banheiros: <?= $imovel['quant_banheiros'] ?></span>
+                        <span class="preco">R$ <?= number_format($imovel['valor'], 3, '.', '.') ?></span>
+                        <div class="detalhes-imovel">
+                            <div class="detalhe-item">
+                                <span><?= $imovel['area'] ?> m²</span> <span>Área</span>
+                            </div>
+                            <div class="detalhe-item">
+                                <span><?= $imovel['quant_quartos'] ?></span>
+                                <span>Quartos</span>
+                            </div>
+                            <div class="detalhe-item">
+                                <span><?= $imovel['quant_banheiros'] ?></span>
+                                <span>Banheiros</span>
+                            </div>
+                            <div class="detalhe-item">
+                                <span><?= $imovel['vagas_garagem'] ?? 0 ?></span> <span>Vagas</span>
+                            </div>
+                        </div>
                         
                         <?php 
                         switch ($imovel['status']) {
@@ -161,14 +176,49 @@
                         ?>
                         <div class="acoes">
                             <a href="detalhe-imovel?id=<?= htmlspecialchars($imovel['id']) ?>" class="ver-detalhes">Ver Detalhes</a>
-                            <a href="" class="contato">Contato</a>
                         </div>
                     </div>
                 </div>
                 <?php } ?>
             </div>
+            </div>
+
+            <?php if ($totalPages > 1): 
+                // Captura os filtros atuais para manter na URL da paginação
+                $currentQuery = http_build_query(array_merge($_GET, ['page' => '']));
+                $baseUrl = '?' . $currentQuery;
+            ?>
+            <nav class="paginacao-container" aria-label="Navegação de Resultados">
+                <ul class="paginacao-lista">
+                    <li class="paginacao-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
+                        <a href="<?= $baseUrl . ($currentPage - 1) ?>" aria-label="Anterior" class="paginacao-link">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+
+                    <?php 
+                    $startPage = max(1, $currentPage - 2);
+                    $endPage = min($totalPages, $currentPage + 2);
+
+                    for ($i = $startPage; $i <= $endPage; $i++): 
+                    ?>
+                        <li class="paginacao-item <?= $i == $currentPage ? 'active' : '' ?>">
+                            <a href="<?= $baseUrl . $i ?>" class="paginacao-link"><?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
+
+                    <li class="paginacao-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
+                        <a href="<?= $baseUrl . ($currentPage + 1) ?>" aria-label="Próxima" class="paginacao-link">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+                <p class="paginacao-info">Página <?= $currentPage ?> de <?= $totalPages ?></p>
+            </nav>
+            <?php endif; ?>
         </section>
         <script src="assets/js/main.js"></script>
+        <script src="assets/js/menu.js"></script>
     </main>
     <?php include VIEWS . 'includes/footer.php';?>
 </body>

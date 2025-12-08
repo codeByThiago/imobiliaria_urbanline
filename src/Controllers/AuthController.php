@@ -24,6 +24,7 @@ class AuthController {
     }
 
     public function login() : void {
+
         $email = $_POST['email'] ?? '';
         $senha = $_POST['senha'] ?? '';
 
@@ -40,11 +41,11 @@ class AuthController {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['nome'];
             $_SESSION['user_picture'] = 'assets/uploads/user/' . $user['picture'] ?? null;
-            $_SESSION['success_message'] = 'Login realizado com sucesso!';
+            $_SESSION['sucess_message'] = 'Login realizado com sucesso!';
             header('Location: /');
             exit;
         } else {
-            $_SESSION['error_message'] = 'Email ou senha inválidos.';
+            $_SESSION['erro_message'] = 'Email ou senha inválidos.';
             header('Location: /login');
             exit;
         }
@@ -116,7 +117,7 @@ class AuthController {
         
             // 5. Limpa a sessão social e faz login
             unset($_SESSION['social_register_data']);
-            $_SESSION['success_message'] = 'Cadastro realizado com sucesso!';
+            $_SESSION['sucess_message'] = 'Cadastro realizado com sucesso!';
             $_SESSION['logado'] = TRUE;
             $_SESSION['user_id'] = $user->getId();
             $_SESSION['user_picture'] = $user->getPicture() ?? null;
@@ -179,7 +180,7 @@ class AuthController {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['nome'];
                 $_SESSION['user_picture'] = $user['picture'] ?? null;
-                $_SESSION['success_message'] = 'Login realizado com sucesso!';
+                $_SESSION['sucess_message'] = 'Login realizado com sucesso!';
                 header('Location: /');
                 exit;
             }
@@ -241,7 +242,7 @@ class AuthController {
                 $this->userDAO->atualizarSenha($registro['user_id'], $novaSenhaHash);
                 $passwordResetsDAO->delete($registro['id']);
 
-                $_SESSION['success_message'] = "Senha redefinida com sucesso! Faça login novamente.";
+                $_SESSION['sucess_message'] = "Senha redefinida com sucesso! Faça login novamente.";
                 header("Location: /login");
                 exit;
             } catch (\Exception $e) {

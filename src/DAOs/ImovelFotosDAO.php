@@ -15,7 +15,7 @@ class ImovelFotosDAO extends BaseDAO {
 
     public function findByImovelId(int $imovelId) : array {
         try {
-            $sql = "SELECT f.* FROM imovel_fotos f 
+            $sql = "SELECT f.* FROM imovel_fotos f
                     JOIN imoveis i ON f.imovel_id = i.id
                     WHERE f.imovel_id = :imovel_id";
 
@@ -26,11 +26,7 @@ class ImovelFotosDAO extends BaseDAO {
             $stmt->execute();
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            $imovel_fotos_models = [];
-
-            foreach ($data as $imovel_foto_data) {
-                $imovel_fotos_models[] = new ImovelFotos($imovel_foto_data);
-            }
+            $imovel_fotos_models = $data;
             
             return $imovel_fotos_models;
             

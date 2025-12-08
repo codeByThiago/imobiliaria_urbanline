@@ -50,7 +50,7 @@ INSERT INTO endereco (cep, uf, cidade, bairro, logradouro, numero) VALUES
 ('66010-000', 'PA', 'Marabá', 'Centro', 'Rua WW', '490'),
 ('77002-000', 'TO', 'Porto Nacional', 'Centro', 'Rua XX', '500');
 
-INSERT INTO users (nome, email, senha, telefone, cpf, foto_url, role_id, endereco_id) VALUES
+INSERT INTO users (nome, email, password, telefone, cpf, picture, role_id, endereco_id) VALUES
 ('João Silva', 'joao.silva@example.com', '123456', '11999999999', '111.111.111-11', NULL, 2, 41),
 ('Maria Souza', 'maria.souza@example.com', '123456', '21999999999', '222.222.222-22', NULL, 2, 42),
 ('Carlos Oliveira', 'carlos.oliveira@example.com', '123456', '31999999999', '333.333.333-33', NULL, 2, 3),

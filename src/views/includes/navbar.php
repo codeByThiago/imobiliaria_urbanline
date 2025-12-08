@@ -12,8 +12,9 @@
             </div>
         </div>
         <ul class="navbar-items">
-            <li class="navbar-link"><a href="/">Início</a></li>
-            <li class="navbar-link"><a href="/search">Procurar Imóvel</a></li>
+            <li class="navbar-link"><a href="/"><i class="fa-solid fa-house"></i> Início</a></li>
+            <li class="navbar-link"><a href="/search"><i class="fa-solid fa-magnifying-glass"></i> Procurar Imóvel</a></li>
+            <li class="navbar-link"><a href="/contato"><i class="fa-solid fa-envelope"></i> Contato</a></li>
             <?php
 
             if (isset($_SESSION['logado']) && $_SESSION['logado'] === TRUE) {
@@ -21,12 +22,32 @@
                 
                 $pictureUrl = $_SESSION['user_picture'] ?? $defaultPicture;
                 
-                echo '<li class="navbar-link"><a href="/logout">Sair da conta</a></li>';
-                echo '<i class="fa-solid fa-comment" style="font-size: 24px;"></i>';
+                $totalMsg = isset($totalMensagensNaoLidas) ? (int)$totalMensagensNaoLidas : 0;
+
+                $totalMsg = 21;
+                $contadorFormatado = '';
+
+                if ($totalMsg > 0) {
+                    $contadorFormatado = $totalMsg > 99 ? '99+' : $totalMsg;
+                    $badgeStyle = ''; // Estilo para aparecer
+                } else {
+                    $contadorFormatado = '0';
+                    $badgeStyle = 'display: none;'; // Estilo para ocultar
+                }
+
+                echo '
+                    <li class="navbar-link navbar-mensagens-link">
+                        <a href="/mensagens">
+                            <i class="fa-solid fa-comment"></i> Mensagens
+                            <span class="circle-notification" style="' . $badgeStyle . '">' . $contadorFormatado . '</span>
+                        </a>
+                    </li>    
+                    ';
+                echo '<li class="navbar-link" id="navbar-logout"><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Sair da conta</a></li>';
                 
-                echo '<img src="' . htmlspecialchars($pictureUrl) . '" style="border-radius: 50%; width: 30px; height: 30px; object-fit: cover;" alt="Foto de Perfil do Usuário">';
+                echo '<img src="' . htmlspecialchars($pictureUrl) . '" style="border-radius: 50%; width: 36px; height: 36px; object-fit: cover;" alt="Foto de Perfil do Usuário">';
             } else {
-                echo '<li class="navbar-link"><a href="/cadastro">Cadastrar-se</a></li>';
+                echo '<li class="navbar-link"><a href="/cadastro">Cadastro</a></li>';
                 echo '<li class="navbar-link"><a href="/login">Entrar</a></li>';
             }
             ?>

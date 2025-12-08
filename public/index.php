@@ -13,6 +13,7 @@ use Core\Autoload;
 use Controllers\UserController;
 use Controllers\AuthController;
 use Controllers\ImoveisController;
+use Controllers\MensagemController;
 
 Autoload::register();
 
@@ -30,6 +31,7 @@ if (empty($uri)) {
 $userController = new UserController();
 $authController = new AuthController();
 $imoveisController = new ImoveisController();
+$mensagemController = new MensagemController();
 
 try {
     switch ($uri) {
@@ -44,6 +46,11 @@ try {
             $imoveisController->detalheImovel();
             break;
         case 'login':
+            if(isset($_SESSION['user_id']) && $_SESSION['user_id'] !== null) {
+                $_SESSION['error_message'] = "Você já está logado. Saia da conta caso queira acessar outra.";
+                header('Location: /');
+                exit();
+            }
             if($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $authController->login();
             } else {
@@ -51,6 +58,11 @@ try {
             }
             break;
         case 'cadastro':
+            if(isset($_SESSION['user_id']) && $_SESSION['user_id'] !== null) {
+                $_SESSION['error_message'] = "Você já está logado. Saia da conta caso queira acessar outra.";
+                header('Location: /');
+                exit();
+            }
             if($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $authController->cadastro();
             } else {
@@ -61,10 +73,23 @@ try {
             $authController->logout();
             break;
         case 'user/google-login':
+            if(isset($_SESSION['user_id']) && $_SESSION['user_id'] !== null) {
+                $_SESSION['error_message'] = "Você já está logado. Saia da conta caso queira acessar outra.";
+                header('Location: /');
+                exit();
+            }
             $authController->googleLogin();
             break;
         case 'user/google-callback':
             $authController->googleCallback();
+            break;
+        case 'mensagens':
+            if(!isset($_SESSION['user_id']) && $_SESSION['user_id'] === null) {
+                $_SESSION['error_message'] = "Você precisa estar logado para acessar suas mensagens.";
+                header('Location: /');
+                exit();
+            }
+            $mensagemController->index();
             break;
         default:
             $userController->errorPage404();

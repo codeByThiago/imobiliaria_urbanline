@@ -33,8 +33,7 @@
     display: flex; 
     flex-flow: column; 
     align-items: center; 
-    gap: 20px; 
-    color: var(--text-light); /* Usa a cor do texto padrão */
+    gap: 20px;
     position: absolute; 
     left: 50%; 
     top: 50%; 
@@ -336,3 +335,7 @@ form {
         display: grid; 
     } 
 } 
+
+.navbar {
+    color: var(--text-light);
+}

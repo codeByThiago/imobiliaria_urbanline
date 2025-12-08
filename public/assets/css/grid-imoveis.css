@@ -106,63 +106,152 @@
 
 /* ===== GRID DE IMÓVEIS ===== */
 .grid-imoveis {
+    /* No mobile, repete colunas para cards de no mínimo 240px */
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 20px;
 }
 
-/* ===== CARDS ===== */
 .card-imovel {
     position: relative;
-    display: flex;
-    flex-flow: column nowrap;
     border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    /* Remover borda, usar apenas a sombra para um look mais clean */
+    border: none; 
     overflow: hidden;
-    background-color: var(--bg-dark);
+    background-color: var(--bg-secondary);
     color: var(--text-light);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-    transition: transform 0.2s ease;
+    /* Sombra suave para o efeito flutuante */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card-imovel:hover {
     transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
 }
 
 .card-imovel img {
     width: 100%;
-    height: 160px;
+    /* Altura um pouco maior para a imagem */
+    height: 200px; 
     object-fit: cover;
 }
 
+/* Status (Etiqueta "À Venda") */
 span.status {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 15px;
+    left: 15px; /* Mudar para o canto superior esquerdo */
+    right: auto;
     border-radius: 6px;
-    padding: 5px 10px;
-    color: white;
-    font-weight: bold;
-    font-size: 0.8em;
+    padding: 6px 12px;
+    color: var(--bg-dark); /* Texto escuro sobre cor clara */
+    background-color: var(--accent-gold); /* Usar o dourado para o destaque principal */
+    font-weight: 700;
+    font-size: 0.85em;
+    z-index: 10;
 }
 
+/* Ajustes de cor para os outros status para serem visíveis no fundo dourado */
 span.status.disponivel {
-    background-color: limegreen;
+    background-color: var(--status-disponivel);
+    color: white;
 }
 
 span.status.alugado {
-    background-color: orange;
+    background-color: var(--status-alugado);
+    color: white;
 }
 
 span.status.vendido {
-    background-color: red;
+    background-color: var(--status-vendido);
+    color: white;
 }
 
+
+/* Informações do Card */
 .info {
     display: flex;
     flex-flow: column nowrap;
-    gap: 8px;
-    padding: 16px;
+    padding: 18px; /* Aumentar um pouco o padding interno */
+}
+
+/* Título (Nome do Imóvel) */
+.info h3 {
+    font-family: var(--font-chamativa);
+    font-size: 1.3em;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 5px;
+}
+
+/* Localização (simulando a localização do seu exemplo) */
+.info .localizacao {
+    color: var(--text-muted);
+    font-size: 0.85em;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.info .localizacao i {
+    color: var(--accent-gold);
+    font-size: 1em;
+}
+
+/* Preço (O maior destaque) */
+.info .preco {
+    font-family: var(--font-padrao);
+    font-size: 1.8em;
+    font-weight: bold;
+    color: var(--accent-gold);
+    margin-bottom: 20px;
+}
+
+/* Layout dos Detalhes (Quartos, Banheiros, etc) */
+.detalhes-imovel {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--bg-accent-light); /* Linha divisória fina */
+}
+
+.detalhe-item {
+    display: flex;
+    flex-flow: column nowrap;
+    text-align: center;
+    flex: 1;
+}
+
+.detalhe-item span:first-child {
+    /* Valor do detalhe (ex: 4) */
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--text-light);
+}
+
+.detalhe-item span:last-child {
+    /* Nome do detalhe (ex: Quartos) */
+    font-size: 0.75em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-top: 3px;
+}
+
+/* Seção de Visualizações (bottom left no exemplo) */
+.visualizacoes {
+    font-size: 0.75em;
+    color: var(--text-muted);
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.visualizacoes i {
+    color: var(--text-muted);
 }
 
 .acoes {
@@ -207,5 +296,9 @@ span.status.vendido {
 
     .grid-imoveis {
         grid-template-columns: repeat(autofit, minmax(500px, 1fr));
+    }
+
+    .card-imovel img {
+        height: 220px; /* Um pouco mais alto no desktop */
     }
 }

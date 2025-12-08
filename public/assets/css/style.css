@@ -23,6 +23,11 @@
 
     --text-light: #EAEAEA; /* Texto Principal Claro */
     --text-muted: #8C8C8C; /* Texto Secundário/Desabilitado */
+
+    /* STATUS COLORS */
+    --status-disponivel: limegreen;
+    --status-alugado: orange;
+    --status-vendido: red;
 }
 
 /* TEMA CLARO (LUXO) */
@@ -40,7 +45,17 @@
     --text-muted: #666666; /* Texto Secundário/Desabilitado */
 }
 
-body { font-size: 0.9em; font-family: var(--font-padrao); background-color: var(--bg-body-fundo); } 
+body { font-size: 0.9em; font-family: var(--font-padrao); background-color: var(--bg-body-fundo); color: var(--text-light); } 
+
+body.inicial .form-container {
+  color: white;
+}
+
+@media only screen and (min-width: 768px) {
+  body.inicial .navbar-brand h1, body.inicial .navbar-items a {
+    color: white;
+  }
+}
 
 .sr-only {
     position: absolute;

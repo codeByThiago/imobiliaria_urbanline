@@ -3,7 +3,7 @@
 .navbar {
     color: var(--text-light);
     background-color: var(--bg-dark);
-    padding: 20px;
+    padding: 20px 50px;
     
     display: flex;
     flex-flow: column nowrap;
@@ -27,6 +27,12 @@
     align-items: center; 
     gap: 15px; 
 } 
+
+.navbar-brand h1 {
+    font-family: var(--font-chamativa); 
+    font-size: 1.8em; 
+    color: var(--text-light); 
+}
 
 .navbar-brand .logo { 
     /* Ajustado para tema claro/escuro */
@@ -72,8 +78,43 @@
 
 .navbar-link a:hover { 
     text-decoration: underline; 
-    color: var(--accent-gold); 
+    color: var(--accent-gold) !important; 
 } 
+
+#navbar-logout a:hover {
+    color: red !important;
+}
+
+.navbar-link i {
+    font-size: 1.2em;
+}
+
+.navbar-mensagens-link {
+    /* Container para posicionar o badge sobre o link */
+    position: relative;
+    display: flex; /* Para centralizar horizontalmente com outros links */
+    align-items: center; 
+}
+
+.circle-notification {
+    position: absolute; /* Posição absoluta em relação ao .navbar-mensagens-link */
+    top: -5px; 
+    left: 20px; /* Ajuste para o canto superior direito do ícone ou link */
+    
+    background-color: var(--accent-gold);
+    color: var(--bg-dark); /* Mudado para bg-dark para melhor contraste */
+    border-radius: 50%;
+    min-width: 18px; /* Alterado para min-width para suportar '99+' */
+    height: 18px;
+    padding: 0 4px; /* Adiciona padding lateral para 99+ */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75em;
+    font-weight: bold;
+    /* Oculto por padrão no CSS, só será exibido no PHP se > 0 */
+    opacity: 1; 
+}
 
 @media only screen and (min-width: 768px){
     .navbar {
