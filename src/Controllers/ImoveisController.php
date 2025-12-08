@@ -14,7 +14,7 @@ class ImoveisController {
     private ImovelFotosDAO $imovelFotosDAO;
     private EnderecoDAO $enderecoDAO;
     private UserDAO $userDAO;
-    private const ITEMS_PER_PAGE = 15;
+    private const ITEMS_PER_PAGE = 10;
     
     public function __construct() {
         $this->imoveisDAO = new ImoveisDAO();

@@ -22,62 +22,106 @@
                     <input type="text" name="search-input" id="search-input" placeholder="Buscar...">
                 </div>
             </div>
+            <?php if ($totalPages > 1): 
+                // Captura os filtros atuais para manter na URL da paginação
+                $currentQuery = http_build_query(array_merge($_GET, ['page' => '']));
+                $baseUrl = '?' . $currentQuery;
+            ?>
+            <nav class="paginacao-container" aria-label="Navegação de Resultados">
+                <ul class="paginacao-lista">
+                    <li class="paginacao-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
+                        <a href="<?= $baseUrl . 1 ?>" aria-label="Primeira Página" class="paginacao-link">
+                            <i class="fas fa-chevron-left"></i>
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li class="paginacao-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
+                        <a href="<?= $baseUrl . ($currentPage - 1) ?>" aria-label="Anterior" class="paginacao-link">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
 
+                    <?php 
+                    $startPage = max(1, $currentPage - 2);
+                    $endPage = min($totalPages, $currentPage + 2);
+
+                    for ($i = $startPage; $i <= $endPage; $i++): 
+                    ?>
+                        <li class="paginacao-item <?= $i == $currentPage ? 'active' : '' ?>">
+                            <a href="<?= $baseUrl . $i ?>" class="paginacao-link"><?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
+
+                    <li class="paginacao-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
+                        <a href="<?= $baseUrl . ($currentPage + 1) ?>" aria-label="Próxima" class="paginacao-link">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="paginacao-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
+                        <a href="<?= $baseUrl . $totalPages ?>" aria-label="Última Página" class="paginacao-link">
+                            <i class="fas fa-chevron-right"></i>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+                <p class="paginacao-info">Página <?= $currentPage ?> de <?= $totalPages ?></p>
+            </nav>
+            <?php endif; ?>
             <div class="filtros">
                 <form action="" method="get">    
                     <div class="form-control">
                         <label for="ordenar-por">Ordenar por</label>
-                        <select name="ordernar-por" id="ordenar-por">
-                            <option value="relevancia">Relevância</option>
-                            <option value="menor-preco">Preço: menor</option>
-                            <option value="maior-preco">Preço: maior</option>
+                        <select name="ordenar-por" id="ordenar-por">
+                            <?php $o = $filters['ordenar-por'] ?? 'relevancia'; ?> 
+                            <option value="relevancia" <?= $o === 'relevancia' ? 'selected' : '' ?>>Relevância</option>
+                            <option value="menor-preco" <?= $o === 'menor-preco' ? 'selected' : '' ?>>Preço: menor</option>
+                            <option value="maior-preco" <?= $o === 'maior-preco' ? 'selected' : '' ?>>Preço: maior</option>
                         </select>
                     </div>
 
                     <div class="form-control">
                         <label for="status-imovel">Status</label>
                         <select name="status-imovel" id="status-imovel">
-                            <option value="" <?= ($filters['status-imovel'] ?? '') === '' ? 'selected' : '' ?>>Todos</option>
-                            
-                            <option value="disponivel" <?= ($filters['status-imovel'] ?? '') === 'aluguel' ? 'selected' : '' ?>>Disponível</option>
-                            
-                            <option value="vendido" <?= ($filters['status-imovel'] ?? '') === 'venda' ? 'selected' : '' ?>>Vendido</option>
-                            
-                            <option value="alugado" <?= ($filters['status-imovel'] ?? '') === 'alugado' ? 'selected' : '' ?>>Alugado</option>
-                            
+                            <?php $s = $filters['status-imovel'] ?? ''; ?> 
+                            <option value="" <?= $s === '' ? 'selected' : '' ?>>Todos</option>
+                            <option value="disponivel" <?= $s === 'disponivel' ? 'selected' : '' ?>>Disponível</option>
+                            <option value="vendido" <?= $s === 'vendido' ? 'selected' : '' ?>>Vendido</option>
+                            <option value="alugado" <?= $s === 'alugado' ? 'selected' : '' ?>>Alugado</option>
                         </select>
                     </div>
 
                     <div class="form-control">
                         <label for="tipo">Tipo</label>
                         <select name="tipo" id="tipo">
-                            <option selected value="">Todos</option>
-                            <option value="casa">Casa</option>
-                            <option value="apartamento">Apartamento</option>
-                            <option value="kitnet">Kitnet</option>
-                            <option value="sobrado">Sobrado</option>
-                            <option value="terreno">Terreno</option>
-                            <option value="comercial">Comercial</option>
+                            <?php $s = $filters['tipo'] ?? ''; ?>
+                            <option value="" <?= $s === '' ? 'selected' : '' ?>>Todos</option>
+                            <option value="casa" <?= $s === 'casa' ? 'selected' : '' ?>>Casa</option>
+                            <option value="apartamento" <?= $s === 'apartamento' ? 'selected' : '' ?>>Apartamento</option>
+                            <option value="kitnet" <?= $s === 'kitnet' ? 'selected' : '' ?>>Kitnet</option>
+                            <option value="sobrado" <?= $s === 'sobrado' ? 'selected' : '' ?>>Sobrado</option>
+                            <option value="terreno" <?= $s === 'terreno' ? 'selected' : '' ?>>Terreno</option>
+                            <option value="comercial" <?= $s === 'comercial' ? 'selected' : '' ?>>Comercial</option>
                         </select>
                     </div>
 
                     <div class="form-control">
                         <label for="valor">Faixa de valor</label>
                         <select name="valor" id="valor">
-                            <option value="">Selecione</option>
-                            <option value="0-100k">Até R$100.000</option>
-                            <option value="100k-300k">R$100.000 - R$300.000</option>
-                            <option value="300k-500k">R$300.000 - R$500.000</option>
-                            <option value="500k-1m">R$500.000 - R$1.000.000</option>
-                            <option value="1m+">Acima de R$1.000.000</option>
+                            <?php $s = $filters['valor'] ?? ''; ?>
+                            <option value="" <?= $s === '' ? 'selected' : '' ?>>Selecione</option>
+                            <option value="0-100k" <?= $s === '0-100k' ? 'selected' : '' ?>>Até R$100.000</option>
+                            <option value="100k-300k" <?= $s === '100k-300k' ? 'selected' : '' ?>>R$100.000 - R$300.000</option>
+                            <option value="300k-500k" <?= $s === '300k-500k' ? 'selected' : '' ?>>R$300.000 - R$500.000</option>
+                            <option value="500k-1m" <?= $s === '500k-1m' ? 'selected' : '' ?>>R$500.000 - R$1.000.000</option>
+                            <option value="1m+" <?= $s === '1m+' ? 'selected' : '' ?>>Acima de R$1.000.000</option>
                         </select>
                     </div>
 
                     <div class="form-control">
                         <label for="quartos">Quartos</label>
                         <select name="quartos" id="quartos">
-                            <option value="">Selecione</option>
                             <?php $q = $filters['quartos'] ?? ''; ?>
+                            <option value=""> <?= $q == 1 ? 'selected' : '' ?>Selecione</option>
                             <option value="1" <?= $q == 1 ? 'selected' : '' ?>>1 quarto</option>
                             <option value="2" <?= $q == 2 ? 'selected' : '' ?>>2 quartos</option>
                             <option value="3" <?= $q == 3 ? 'selected' : '' ?>>3 quartos</option>
@@ -88,49 +132,58 @@
                     <div class="form-control">
                         <label for="banheiros">Banheiros</label>
                         <select name="banheiros" id="banheiros">
-                            <option value="">Selecione</option>
-                            <option value="1">1 banheiro</option>
-                            <option value="2">2 banheiros</option>
-                            <option value="3">3 banheiros</option>
-                            <option value="4+">4 ou mais</option>
+                            <?php $q = $filters['banheiros'] ?? ''; ?>
+                            <option value=""<?= $q == '' ? 'selected' : '' ?>>Selecione</option>
+                            <option value="1"<?= $q == 1 ? 'selected' : '' ?>>1 banheiro</option>
+                            <option value="2"<?= $q == 2 ? 'selected' : '' ?>>2 banheiros</option>
+                            <option value="3"<?= $q == 3 ? 'selected' : '' ?>>3 banheiros</option>
+                            <option value="4+"<?= $q == '4+' ? 'selected' : '' ?>>4 ou mais</option>
                         </select>
                     </div>
 
                     <div class="form-control">
                         <label for="cozinhas">Cozinhas</label>
                         <select name="cozinhas" id="cozinhas">
-                            <option value="">Selecione</option>
-                            <option value="1">1 cozinha</option>
-                            <option value="2">2 cozinhas</option>
-                            <option value="3+">3 ou mais</option>
+                            <?php $c = $filters['cozinhas'] ?? ''; ?>
+                            <option value=""<?=  $c == '' ? 'selected' : '' ?>>Selecione</option>
+                            <option value="1"<?=  $c == 1 ? 'selected' : '' ?>>1 cozinha</option>
+                            <option value="2"<?=  $c == 2 ? 'selected' : '' ?>>2 cozinhas</option>
+                            <option value="3+"<?=  $c == '3+' ? 'selected' : '' ?>>3 ou mais</option>
                         </select>
                     </div>
 
                     <div class="form-control">
                         <label for="piscinas">Piscinas</label>
                         <select name="piscinas" id="piscinas">
-                            <option value="">Selecione</option>
-                            <option value="0">Nenhuma</option>
-                            <option value="1">1 piscina</option>
-                            <option value="2+">2 ou mais</option>
+                            <?php $p = $filters['piscinas'] ?? ''; ?>
+                            <option value=""<?=  $p == '' ? 'selected' : '' ?>>Selecione</option>
+                            <option value="0"<?=  $p == 0 ? 'selected' : '' ?>>Nenhuma</option>
+                            <option value="1"<?=  $p == 1 ? 'selected' : '' ?>>1 piscina</option>
+                            <option value="2+"<?=  $p == '2+' ? 'selected' : '' ?>>2 ou mais</option>
                         </select>
                     </div>
 
                     <div class="form-control">
                         <label for="vagas-de-garagem">Vagas de Garagem</label>
                         <select name="vagas-de-garagem" id="vagas-de-garagem">
-                            <option value="">Selecione</option>
-                            <option value="1">1 vaga</option>
-                            <option value="2">2 vagas</option>
-                            <option value="3">3 vagas</option>
-                            <option value="4+">4 ou mais</option>
+                            <?php $v = $filters['vagas-de-garagem'] ?? ''; ?>
+                            <option value=""<?=  $v == '' ? 'selected' : '' ?>>Selecione</option>
+                            <option value="1"<?=  $v == 1 ? 'selected' : '' ?>>1 vaga</option>
+                            <option value="2"<?=  $v == 2 ? 'selected' : '' ?>>2 vagas</option>
+                            <option value="3"<?=  $v == 3 ? 'selected' : '' ?>>3 vagas</option>
+                            <option value="4+"<?=  $v == '4+' ? 'selected' : '' ?>>4 ou mais</option>
                         </select>
                     </div>
 
                     <button type="submit" id="procurar-imovel-btn">Procurar</button>
                 </form>
             </div>
-
+            <?php if (empty($imoveis)): ?>
+            <div class="no-results-message">
+                <h2>😔 Nenhum imóvel encontrado.</h2>
+                <p>Tente ajustar ou remover alguns dos filtros aplicados. Seu resultado de busca não retornou nenhum imóvel.</p>
+            </div>
+            <?php endif; ?>
             <!-- GRID DE IMÓVEIS -->
             <div class="grid-imoveis">
                 <?php foreach ($imoveis as $imovel) {
@@ -139,7 +192,7 @@
                 ?>
                 <div class="card-imovel">
                     <?php if (!empty($fotoUrl)): ?>
-                        <img src="assets/img/thumbs/<?= htmlspecialchars($fotoUrl) ?>" alt="Foto principal do imóvel" loading="lazy">
+                        <img src="assets/img/full/<?= htmlspecialchars($fotoUrl) ?>" alt="Foto principal do imóvel" loading="lazy">
                     <?php endif; ?>
                     <div class="info">
                         <h3><?= htmlspecialchars($imovel['nome'])?></h3> 
@@ -182,40 +235,6 @@
                 <?php } ?>
             </div>
             </div>
-
-            <?php if ($totalPages > 1): 
-                // Captura os filtros atuais para manter na URL da paginação
-                $currentQuery = http_build_query(array_merge($_GET, ['page' => '']));
-                $baseUrl = '?' . $currentQuery;
-            ?>
-            <nav class="paginacao-container" aria-label="Navegação de Resultados">
-                <ul class="paginacao-lista">
-                    <li class="paginacao-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
-                        <a href="<?= $baseUrl . ($currentPage - 1) ?>" aria-label="Anterior" class="paginacao-link">
-                            <i class="fas fa-chevron-left"></i>
-                        </a>
-                    </li>
-
-                    <?php 
-                    $startPage = max(1, $currentPage - 2);
-                    $endPage = min($totalPages, $currentPage + 2);
-
-                    for ($i = $startPage; $i <= $endPage; $i++): 
-                    ?>
-                        <li class="paginacao-item <?= $i == $currentPage ? 'active' : '' ?>">
-                            <a href="<?= $baseUrl . $i ?>" class="paginacao-link"><?= $i ?></a>
-                        </li>
-                    <?php endfor; ?>
-
-                    <li class="paginacao-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
-                        <a href="<?= $baseUrl . ($currentPage + 1) ?>" aria-label="Próxima" class="paginacao-link">
-                            <i class="fas fa-chevron-right"></i>
-                        </a>
-                    </li>
-                </ul>
-                <p class="paginacao-info">Página <?= $currentPage ?> de <?= $totalPages ?></p>
-            </nav>
-            <?php endif; ?>
         </section>
         <script src="assets/js/main.js"></script>
         <script src="assets/js/menu.js"></script>

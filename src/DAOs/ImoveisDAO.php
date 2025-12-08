@@ -18,25 +18,48 @@ class ImoveisDAO extends BaseDAO {
         // --- 1. Construção da cláusula WHERE e Bindings (REUTILIZÁVEL) ---
         $whereClauses = [];
         $bindings = [];
-        // (Copie aqui a lógica de construção de WHERE e $bindings da sua função original)
-        // Exemplo:
+
+        // Filtro de Busca (search-input) - Assumindo que busca em nome ou descrição
+        if (isset($filters['search-input'])) {
+            $searchTerm = "%" . $filters['search-input'] . "%";
+            $whereClauses[] = "(i.nome LIKE :search_term OR i.descricao LIKE :search_term)";
+            $bindings[':search_term'] = $searchTerm;
+        }
+
+        // Filtro de Status do Imóvel
         if (isset($filters['status-imovel'])) {
             $whereClauses[] = "i.status = :status_imovel";
             $bindings[':status_imovel'] = $filters['status-imovel'];
         }
+
+        // Filtro de Tipo de Imóvel (Você já corrigiu para i.tipo_imovel)
         if (isset($filters['tipo'])) {
             $whereClauses[] = "i.tipo_imovel = :tipo";
             $bindings[':tipo'] = $filters['tipo'];
         }
-        if (isset($filters['quartos'])) {
-             if ($filters['quartos'] == '4+') {
-                 $whereClauses[] = "i.quant_quartos >= 4";
-             } else {
-                 $whereClauses[] = "i.quant_quartos = :quartos";
-                 $bindings[':quartos'] = $filters['quartos'];
-             }
+
+        // Filtro de Faixa de Valor
+        if (isset($filters['valor'])) {
+            // É necessário implementar esta função no DAO ou Controller
+            [$min, $max] = $this->parseValueRange($filters['valor']);
+            
+            if ($min !== null) {
+                $whereClauses[] = "i.valor >= :min_valor";
+                $bindings[':min_valor'] = $min;
+            }
+            if ($max !== null) {
+                $whereClauses[] = "i.valor <= :max_valor";
+                $bindings[':max_valor'] = $max;
+            }
         }
-        // ... (Inclua os outros filtros) ...
+
+        // Helper para filtros de quantidade (quartos, banheiros, etc.)
+        $this->addQuantityFilter($whereClauses, $bindings, $filters, 'quartos', 'quant_quartos');
+        $this->addQuantityFilter($whereClauses, $bindings, $filters, 'banheiros', 'quant_banheiros');
+        $this->addQuantityFilter($whereClauses, $bindings, $filters, 'cozinhas', 'quant_cozinhas');
+        $this->addQuantityFilter($whereClauses, $bindings, $filters, 'piscinas', 'quant_piscinas');
+        $this->addQuantityFilter($whereClauses, $bindings, $filters, 'vagas-de-garagem', 'vagas_garagem');
+
 
         $whereSql = !empty($whereClauses) ? " WHERE " . implode(" AND ", $whereClauses) : "";
         
@@ -102,49 +125,60 @@ class ImoveisDAO extends BaseDAO {
             throw new Exception("Erro ao buscar imóveis: " . $e->getMessage());
         }
     }
-    
-    // --- Funções Auxiliares (Helper Functions) ---
 
-    private function parseValueRange(string $range): array {
-        // Implementar a lógica de conversão aqui (ex: '100k-300k' => [100000, 300000])
-        // Retorna [min, max]
-        return [null, null]; // Implementação placeholder
+    private function addQuantityFilter(array &$whereClauses, array &$bindings, array $filters, string $filterKey, string $columnName): void {
+        if (isset($filters[$filterKey]) && !empty($filters[$filterKey])) { // Adicionado !empty()
+            $filterValue = $filters[$filterKey];
+            $bindKey = ":{$columnName}_val";
+            
+            if (str_ends_with((string)$filterValue, '+')) {
+                // Caso '4+', '2+', etc.
+                $minVal = (int) str_replace('+', '', $filterValue);
+                // Usamos bindValue para o limite
+                $whereClauses[] = "i.{$columnName} >= {$bindKey}";
+                $bindings[$bindKey] = $minVal;
+
+            } else {
+                // Caso exato '1', '2', '3'
+                $whereClauses[] = "i.{$columnName} = {$bindKey}";
+                $bindings[$bindKey] = (int) $filterValue;
+            }
+        }
     }
 
+    /**
+     * Converte a string de faixa de valor (ex: '300k-500k') para [min, max]
+     */
+    private function parseValueRange(string $range): array {
+        if ($range === '1m+') {
+            return [1000000, null];
+        }
+        
+        $parts = explode('-', $range);
+        
+        if (count($parts) === 2) {
+            $minStr = str_replace('k', '000', $parts[0]);
+            $maxStr = str_replace('k', '000', $parts[1]);
+            
+            $min = (int) $minStr;
+            $max = (int) $maxStr;
+            
+            return [$min, $max];
+        }
+        
+        // Para o caso '0-100k'
+        if ($range === '0-100k') {
+            return [0, 100000];
+        }
+        
+        return [null, null]; // Valor inválido
+    }
     private function buildOrderByClause(string $sort): string {
         return match ($sort) {
             'menor-preco' => 'i.valor ASC',
             'maior-preco' => 'i.valor DESC',
             default => 'i.id DESC', // Relevância/Mais recente
         };
-    }
-    
-    private function mapResultsToModelsAndPhotos(array $results): array {
-        $imoveis = [];
-        $fotos_por_imovel = [];
-        $processedImovelIds = [];
-        
-        // Loop que garante que cada imóvel apareça uma vez e pega a primeira foto
-        foreach ($results as $row) {
-            $imovelId = $row['id'];
-
-            // Se ainda não processamos este imóvel, o adicionamos
-            if (!in_array($imovelId, $processedImovelIds)) {
-                $imoveis[] = $row; // Adiciona o imóvel
-                $processedImovelIds[] = $imovelId;
-            }
-            
-            // Pega a URL da foto (se a consulta trouxer a primeira foto como a primeira linha)
-            if (!empty($row['foto_url']) && !isset($fotos_por_imovel[$imovelId])) {
-                 // Usa a foto_url vinda do JOIN
-                $fotos_por_imovel[$imovelId] = $row['foto_url']; 
-            }
-        }
-        
-        return [
-            'imoveis' => $imoveis,
-            'fotos_por_imovel' => $fotos_por_imovel
-        ];
     }
 }
 ?>

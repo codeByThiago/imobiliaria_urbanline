@@ -104,6 +104,79 @@
     transform: scale(1.05);
 }
 
+/* ======================================= */
+/* 📄 PAGINAÇÃO */
+/* ======================================= */
+.paginacao-container {
+    grid-column: 1 / -1; /* Ocupa a largura total em qualquer layout */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.paginacao-lista {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 8px;
+}
+
+.paginacao-item {
+    display: inline-block;
+}
+
+.paginacao-link {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: var(--accent-gold);
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--bg-accent-light);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-weight: 600;
+}
+
+.paginacao-link:hover {
+    background-color: var(--bg-accent);
+    color: var(--accent-gold-hover);
+}
+
+.paginacao-item.active .paginacao-link {
+    background-color: var(--accent-gold);
+    color: var(--bg-dark); /* Texto escuro no fundo dourado */
+    border-color: var(--accent-gold);
+    font-weight: bold;
+}
+
+.paginacao-item.disabled .paginacao-link {
+    color: var(--text-muted);
+    pointer-events: none;
+    background-color: var(--bg-accent);
+    border-color: var(--bg-accent-light);
+}
+
+.paginacao-info {
+    font-size: 0.9em;
+    color: var(--text-light);
+}
+
+.no-results-message {
+    padding: 40px 20px;
+}
+
+.no-results-message h2 {
+    color: var(--text-light); /* Cor amarela para destaque */
+    margin-bottom: 10px;
+}
+
+.no-results-message p {
+    color: var(--text-muted);
+    font-size: 1.1em;
+}
+
 /* ===== GRID DE IMÓVEIS ===== */
 .grid-imoveis {
     /* No mobile, repete colunas para cards de no mínimo 240px */
@@ -295,7 +368,7 @@ span.status.vendido {
     }
 
     .grid-imoveis {
-        grid-template-columns: repeat(autofit, minmax(500px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(370px, 1fr));
     }
 
     .card-imovel img {
