@@ -174,6 +174,16 @@
                             <option value="4+"<?=  $v == '4+' ? 'selected' : '' ?>>4 ou mais</option>
                         </select>
                     </div>
+                    
+                    <div class="form-control">
+                        <label for="mobiliado">Mobiliado</label>
+                        <select name="mobiliado" id="mobiliado">
+                            <?php $m = $filters['mobiliado'] ?? ''; ?>
+                            <option value=""<?=  $m === '' ? 'selected' : '' ?>>Selecione</option>
+                            <option value="1"<?=  $m == 1 ? 'selected' : '' ?>>Sim</option>
+                            <option value="0"<?=  $m == 0 && $m !== '' ? 'selected' : '' ?>>Não</option>
+                        </select>
+                    </div>
 
                     <button type="submit" id="procurar-imovel-btn">Procurar</button>
                 </form>

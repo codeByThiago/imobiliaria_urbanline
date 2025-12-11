@@ -91,6 +91,20 @@ try {
             }
             $mensagemController->index();
             break;
+        case 'contato':
+            if($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $userController->enviarMensagemContato();
+            } else {
+                $userController->showContatoForm();
+            }
+            break;
+        case 'contato-corretor':
+            if($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $imoveisController->enviarMensagemCorretor();
+            } else {
+                $imoveisController->contatoCorretorForm();
+            }
+            break;
         default:
             $userController->errorPage404();
             exit();

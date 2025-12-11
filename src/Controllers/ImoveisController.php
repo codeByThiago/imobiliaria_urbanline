@@ -6,6 +6,7 @@ use DAOs\EnderecoDAO;
 use DAOs\UserDAO;
 use DAOs\ImoveisDAO;
 use DAOs\ImovelFotosDAO;
+use DAOs\MensagemDAO;
 use Models\Imovel; 
 use Models\ImovelFotos;
 
@@ -14,6 +15,7 @@ class ImoveisController {
     private ImovelFotosDAO $imovelFotosDAO;
     private EnderecoDAO $enderecoDAO;
     private UserDAO $userDAO;
+    private MensagemDAO $mensagemDAO;
     private const ITEMS_PER_PAGE = 10;
     
     public function __construct() {
@@ -21,6 +23,7 @@ class ImoveisController {
         $this->imovelFotosDAO = new ImovelFotosDAO();
         $this->enderecoDAO = new EnderecoDAO();
         $this->userDAO = new UserDAO();
+        $this->mensagemDAO = new MensagemDAO();
     }
     
     public function search() {
@@ -70,6 +73,16 @@ class ImoveisController {
         $safeFilters['piscinas'] = $this->sanitizeQuantity($input['piscinas'] ?? null);
         $safeFilters['vagas-de-garagem'] = $this->sanitizeQuantity($input['vagas-de-garagem'] ?? null);
         
+        $mobiliado = $input['mobiliado'] ?? null;
+        if ($mobiliado !== null && $mobiliado !== '') {
+            // Garante que é 1 (true) ou 0 (false)
+            $safeFilters['mobiliado'] = filter_var($mobiliado, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 1]]);
+            if ($safeFilters['mobiliado'] === false) {
+                 // Trata como null se não for 0 ou 1
+                $safeFilters['mobiliado'] = null; 
+            }
+        }
+        
         // Adicione esta função auxiliar:
         $safeFilters['search-input'] = filter_var($input['search-input'] ?? '');
 
@@ -86,6 +99,7 @@ class ImoveisController {
             ? (int) $value
             : null;
     }
+
     public function detalheImovel() {
        $imovelID = $_GET['id'] ?? null;
          if ($imovelID === null) {
@@ -119,5 +133,89 @@ class ImoveisController {
              'endereco' => $endereco,
              'proprietario' => $proprietario
          ]);
+    }
+
+    public function contatoCorretorForm() {
+        if (!isset($_SESSION['user_id'])) {
+            $_SESSION['error_message'] = "Você precisa estar logado para enviar uma mensagem ao corretor.";
+            header('Location: /detalhe-imovel?id=' . ($_GET['imovel'] ?? ''));
+            exit();
+        }
+
+        $imovelId = $_GET['imovel'] ?? null;
+        $corretorId = $_GET['corretor'] ?? null;
+
+        $imovel = $this->imoveisDAO->selectById($imovelId);
+        $corretor = $this->userDAO->selectById($corretorId);
+        
+        // Inicializa variáveis para o formulário
+        $data = [
+            'imovel' => $imovel,
+            'corretor' => $corretor,
+            'remetente_nome' => null,
+            'remetente_telefone' => null,
+            'remetente_email' => null
+        ];
+
+        // 1. Verificar se o corretor é válido para o imóvel
+        if($this->imoveisDAO->verificarProprietario($imovelId, $corretorId)) {
+            
+            // 2. Verificar se o usuário está logado
+            if(isset($_SESSION['user_id'])) {
+                $userId = $_SESSION['user_id'];
+
+                $remetente = $this->userDAO->selectById($userId);
+
+                if ($remetente !== null) {
+                    $data['remetente_nome'] = $remetente['nome'];
+                    $data['remetente_telefone'] = $remetente['telefone'];
+                    $data['remetente_email'] = $remetente['email'];
+                }
+            }
+
+            renderView('user/contato/corretor', $data);
+            
+        } else {
+            $_SESSION['error_message'] = "Corretor inválido para o imóvel selecionado.";
+            header('Location: /search');
+            exit();
+        }
+    }
+
+    public function enviarMensagemCorretor() {
+        if (!isset($_SESSION['user_id'])) {
+            $_SESSION['error_message'] = "Você precisa estar logado para enviar uma mensagem ao corretor.";
+            header('Location: /detalhe-imovel?id=' . ($_POST['imovel_id'] ?? ''));
+            exit();
+        }
+
+        $userId = $_SESSION['user_id'];
+
+        $destinatario_id = $_POST['corretor_id'] ?? null;
+        $assunto = $_POST['assunto'] ?? '';
+        $mensagem = $_POST['mensagem'] ?? '';
+        $imovelId = $_POST['imovel_id'] ?? null;
+        
+        $data = [
+            'destinatario_id' => $destinatario_id,
+            'remetente_id' => $userId,
+            'titulo' => $assunto,
+            'mensagem' => $mensagem,
+            'link' => '/detalhe-imovel?id=' . $imovelId,
+        ];
+
+        try {
+            $this->mensagemDAO->create($data);
+            
+            $_SESSION['success_message'] = "Mensagem enviada com sucesso ao corretor!";
+            header('Location: /detalhe-imovel?id=' . $imovelId); 
+            exit();
+
+        } catch (\PDOException $e) {
+            $_SESSION['error_message'] = "Erro ao enviar a mensagem. Tente novamente.";
+            error_log("Erro ao enviar mensagem: " . $e->getMessage());
+            header('Location: /contato-corretor-form?imovel=' . $imovelId . '&corretor=' . $destinatario_id);
+            exit();
+        }
     }
 }

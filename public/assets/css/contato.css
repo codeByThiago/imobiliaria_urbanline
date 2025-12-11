@@ -1,0 +1,107 @@
+/* ================================================= */
+/* ESTILOS DE PÁGINAS DE CONTATO                     */
+/* ================================================= */
+
+.contact-page {
+    padding: 60px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.contact-section {
+    background-color: var(--bg-secondary); /* Fundo de card */
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.contact-section .titulo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.contact-section h1 {
+    font-family: var(--font-chamativa);
+    color: var(--accent-gold);
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.contact-section p {
+    color: var(--text-muted);
+}
+
+.contact-form .form-control {
+    margin-bottom: 20px;
+}
+
+.contact-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-light);
+    font-size: 0.9em;
+}
+
+.contact-form input[type="text"],
+.contact-form input[type="email"],
+.contact-form input[type="tel"],
+.contact-form select,
+.contact-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--bg-accent);
+    border-radius: 6px;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    font-family: var(--font-padrao);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 1px var(--accent-gold);
+    outline: none;
+}
+
+.contact-form textarea {
+    resize: vertical;
+}
+
+/* Botão de Envio Dourado */
+.submit-button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    
+    color: var(--bg-dark); /* Texto escuro */
+    background-color: var(--accent-gold);
+    border: none;
+    border-radius: 6px;
+    transition: background-color 0.3s, opacity 0.3s;
+}
+
+.submit-button:hover {
+    background-color: var(--accent-gold-hover);
+}
+
+/* Ajuste para o Tema Claro */
+:root[data-theme='light'] .contact-section {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme='light'] .contact-form input,
+:root[data-theme='light'] .contact-form select,
+:root[data-theme='light'] .contact-form textarea {
+    background-color: var(--bg-accent);
+    border-color: var(--bg-accent-light);
+    color: var(--text-light);
+}
+
+:root[data-theme='light'] .submit-button {
+    color: var(--bg-dark); /* Mantém texto escuro no botão dourado */
+}

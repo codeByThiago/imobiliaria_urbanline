@@ -60,7 +60,11 @@ class ImoveisDAO extends BaseDAO {
         $this->addQuantityFilter($whereClauses, $bindings, $filters, 'piscinas', 'quant_piscinas');
         $this->addQuantityFilter($whereClauses, $bindings, $filters, 'vagas-de-garagem', 'vagas_garagem');
 
-
+        if (isset($filters['mobiliado']) && ($filters['mobiliado'] === 1 || $filters['mobiliado'] === 0)) {
+            $whereClauses[] = "i.mobiliado = :mobiliado_val";
+            $bindings[':mobiliado_val'] = $filters['mobiliado'];
+        }
+        
         $whereSql = !empty($whereClauses) ? " WHERE " . implode(" AND ", $whereClauses) : "";
         
         // --- 2. Contar o Total de Imóveis (sem paginação) ---
@@ -173,12 +177,27 @@ class ImoveisDAO extends BaseDAO {
         
         return [null, null]; // Valor inválido
     }
+    
     private function buildOrderByClause(string $sort): string {
         return match ($sort) {
             'menor-preco' => 'i.valor ASC',
             'maior-preco' => 'i.valor DESC',
             default => 'i.id DESC', // Relevância/Mais recente
         };
+    }
+
+    public function verificarProprietario(int $imovelId, int $proprietarioId) {
+        try {
+            $sql = "SELECT COUNT(*) FROM {$this->table} WHERE id = :imovel_id AND usuario_id = :proprietario_id";
+            $stmt = $this->conexao->prepare($sql);
+            $stmt->bindValue(':imovel_id', $imovelId, PDO::PARAM_INT);
+            $stmt->bindValue(':proprietario_id', $proprietarioId, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchColumn() > 0;
+        } catch (PDOException $e) {
+            throw new Exception("Erro ao verificar proprietário do imóvel: " . $e->getMessage());
+        }
     }
 }
 ?>

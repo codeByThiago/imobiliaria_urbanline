@@ -1,0 +1,85 @@
+/* ================================================= */
+/* ESTILOS DA PÁGINA DE ERRO 404         */
+/* ================================================= */
+
+.error-page {
+    /* Garante que o body ocupe a altura total da viewport */
+    height: 100vh; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-body-fundo); /* Fundo da página */
+    text-align: center;
+}
+
+.error-container {
+    width: 100%;
+    max-width: 600px;
+    padding: 30px;
+    background-color: var(--bg-dark); /* Fundo principal escuro */
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    margin: 20px;
+}
+
+.error-content {
+    color: var(--text-light);
+}
+
+.error-code {
+    font-family: var(--font-chamativa);
+    font-size: 8em;
+    color: var(--accent-gold); /* Dourado de destaque */
+    margin: 0;
+}
+
+.error-title {
+    font-family: var(--font-padrao);
+    font-weight: 600;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--bg-accent-light); /* Linha sutil de separação */
+    padding-bottom: 10px;
+}
+
+.error-message {
+    font-size: 1em;
+    color: var(--text-muted); /* Texto mais sutil */
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.return-button {
+    display: inline-block;
+    padding: 10px 25px;
+    margin-top: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    
+    /* Estilo Dourado de Luxo */
+    color: var(--bg-dark); /* Texto escuro no botão dourado */
+    background-color: var(--accent-gold);
+    border: 1px solid var(--accent-gold);
+    border-radius: 6px;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.return-button:hover {
+    background-color: var(--accent-gold-hover);
+    border-color: var(--accent-gold-hover);
+}
+
+/* Ajuste para o Tema Claro */
+:root[data-theme='light'] .error-container {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme='light'] .return-button {
+    color: var(--text-light); /* Texto escuro no tema claro */
+    background-color: var(--accent-gold);
+}
+
+:root[data-theme='light'] .return-button:hover {
+    background-color: var(--accent-gold-hover);
+    color: var(--text-light);
+}

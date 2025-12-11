@@ -39,6 +39,14 @@ class UserController {
         renderView('user/dashboard');
     }
 
+    public function showContatoForm() {
+        renderView('user/contato/urbanline');
+    }
+
+    public function enviarMensagemContato() {
+
+    }
+
     public function errorPage404() {
         renderView('user/404');
     }

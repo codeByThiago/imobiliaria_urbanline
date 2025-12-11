@@ -63,7 +63,7 @@
                     <li>Condição: <span><?= ucfirst(str_replace('_', ' ', $imovel['condicao'])) ?></span></li>
                     <li>Suítes: <span><?= $imovel['quant_suites']?></span></li>
                     <li>Cozinhas: <span><?= $imovel['quant_cozinhas']?></span></li>
-                    <li>Piscina: <span><?= $imovel['quant_piscinas'] > 0 ? 'Sim' : 'Não' ?></span></li>
+                    <li>Piscina: <span><?= $imovel['quant_piscinas']?></span></li>
                     <li>Mobiliado: <span><?= $imovel['mobiliado'] ? 'Sim' : 'Não' ?></span></li>
                 </ul>
             </div>
@@ -88,9 +88,14 @@
                         </div>
                         
                         <div class="proprietario-acao">
-                            <a href="#" class="btn-contato">
-                                <i class="fas fa-phone"></i> Entrar em Contato
-                            </a>
+                            <form action="/contato-corretor" method="get" id="contato-corretor-form-<?= $imovel['id'] ?>">
+                                <input type="hidden" name="imovel" value="<?= $imovel['id'] ?>">
+                                <input type="hidden" name="corretor" value="<?= $proprietario['id'] ?>">
+
+                                <button type="submit" class="btn-contato">
+                                    <i class="fas fa-phone"></i> Entrar em Contato
+                                </button>
+                            </form>
                         </div>
                         
                     </div>
