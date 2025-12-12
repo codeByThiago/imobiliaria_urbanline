@@ -36,13 +36,20 @@ class MensagemController {
             $mensagemDetalhe = $this->mensagemDAO->findByIdAndDestinatario($selectedId, $userId);
         }
 
+        $totalMensagensNaoLidas = 0;
+        if (isset($_SESSION['logado']) && $_SESSION['logado'] === TRUE) {
+            // Faça a chamada DAO no Controller e guarde o resultado
+            $totalMensagensNaoLidas = $this->mensagemDAO->countUnreadByDestinatario($userId) ?? 0;
+        }
+
         // 4. Renderizar a view com todos os dados
         renderView('user/mensagens', [
             'mensagens' => $mensagens,
             'mensagemDetalhe' => $mensagemDetalhe,
             'currentPage' => $page,
             'totalPages' => $totalPages,
-            'totalNaoLidas' => $this->mensagemDAO->countUnreadByDestinatario($userId)
+            'totalNaoLidas' => $totalMensagensNaoLidas,
+            'totalMensagensNaoLidas' => $totalMensagensNaoLidas
         ]);
     }
 }

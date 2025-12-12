@@ -105,6 +105,61 @@ try {
                 $imoveisController->contatoCorretorForm();
             }
             break;
+        case 'perfil':
+            if(!isset($_SESSION['user_id']) && $_SESSION['user_id'] === null) {
+                $_SESSION['error_message'] = "Você precisa estar logado para acessar seu perfil.";
+                header('Location: /');
+                exit();
+            }
+            $userController->perfil();
+            break;
+        case 'dashboard':
+            if(!isset($_SESSION['user_id'])) {
+                $_SESSION['error_message'] = "Você precisa estar logado para acessar o dashboard";
+                header('Location: /');
+            }
+
+            if($_SESSION['role_id'] === 1) {
+                $_SESSION['error_message'] = 'Você precisa ser um proprietário para acessar o dashboard';
+                header('Location: /');
+            }
+
+            $imoveisController->dashboard();
+            break;
+        case 'cadastrar-imovel':
+            if(!isset($_SESSION['user_id'])) {
+                $_SESSION['error_message'] = "Você precisa estar logado para acessar o dashboard";
+                header('Location: /');
+            }
+
+            if($_SESSION['role_id'] === 1) {
+                $_SESSION['error_message'] = 'Você precisa ser um proprietário para acessar o dashboard';
+                header('Location: /');
+            }
+
+            if($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $imoveisController->cadastrarImovel();
+            } else {
+                $imoveisController->showCadastroImovelForm();
+            }
+            break;
+        case 'imoveis-proprietario':
+            if(!isset($_SESSION['user_id'])) {
+                $_SESSION['error_message'] = "Você precisa estar logado para acessar o dashboard";
+                header('Location: /');
+            }
+
+            if($_SESSION['role_id'] === 1) {
+                $_SESSION['error_message'] = 'Você precisa ser um proprietário para acessar o dashboard';
+                header('Location: /');
+            }
+
+            if($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $imoveisController->cadastrarImovel();
+            } else {
+                $imoveisController->imoveisCrud();
+            }
+            break;
         default:
             $userController->errorPage404();
             exit();

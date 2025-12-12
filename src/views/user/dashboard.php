@@ -15,11 +15,9 @@
     
     <nav class="main-menu">
         <ul>
-            <li class="active"><a href="#"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-            <li><a href="#"><i class="fas fa-plus-circle"></i> Cadastrar</a></li>
-            <li><a href="#"><i class="fas fa-building"></i> Imóveis</a></li>
-            <li><a href="#"><i class="fas fa-envelope"></i> Mensagens</a></li>
-            <li><a href="#"><i class="fas fa-history"></i> Histórico</a></li>
+            <li class="active"><a href="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+            <li><a href="cadastrar-imovel"><i class="fas fa-plus-circle"></i> Cadastrar</a></li>
+            <li><a href="imoveis-proprietario"><i class="fas fa-building"></i> Imóveis</a></li>
         </ul>
     </nav>
 
@@ -35,60 +33,61 @@
                     <i class="fas fa-home card-icon"></i>
                 </div>
                 <div class="card-body">
-                    <p class="kpi-value">24</p>
-                    <p class="kpi-detail">+3 desde o último mês</p>
+                    <p class="kpi-value"><?php echo $totalImoveis ?? 0; ?></p>
+                    <p class="kpi-detail">Todos os seus registros</p>
                 </div>
             </div>
 
-            <div class="kpi-card">
+            <div class="kpi-card kpi-messages">
                 <div class="card-header">
-                    <h3 class="card-title">Mensagens</h3>
-                    <i class="fas fa-comment-dots card-icon"></i>
+                    <h3 class="card-title">Mensagens Não Lidas</h3>
+                    <i class="fas fa-envelope-open-text card-icon"></i>
                 </div>
                 <div class="card-body">
-                    <p class="kpi-value">18</p>
-                    <p class="kpi-detail kpi-warning">5 não lidas</p>
+                    <p class="kpi-value kpi-warning"><?php echo $totalMensagensNaoLidas ?? 0; ?></p>
+                    <p class="kpi-detail">Pendentes de resposta</p>
                 </div>
             </div>
 
-            <div class="kpi-card">
+            <div class="kpi-card kpi-available">
                 <div class="card-header">
-                    <h3 class="card-title">Visualizações</h3>
-                    <i class="fas fa-eye card-icon"></i>
+                    <h3 class="card-title">Disponíveis para Venda/Aluguel</h3>
+                    <i class="fas fa-check-circle card-icon"></i>
                 </div>
                 <div class="card-body">
-                    <p class="kpi-value">1,234</p>
-                    <p class="kpi-detail kpi-success">+12% em relação ao mês anterior</p>
+                    <p class="kpi-value"><?php echo $imoveisDisponiveis ?? 0; ?></p>
+                    <p class="kpi-detail">Atualmente no ar</p>
                 </div>
             </div>
 
-            <div class="kpi-card">
+            <div class="kpi-card kpi-monthly">
                 <div class="card-header">
-                    <h3 class="card-title">Contatos Ativos</h3>
-                    <i class="fas fa-user-tie card-icon"></i>
+                    <h3 class="card-title">Cadastros Este Mês</h3>
+                    <i class="fas fa-calendar-alt card-icon"></i>
                 </div>
                 <div class="card-body">
-                    <p class="kpi-value">42</p>
-                    <p class="kpi-detail">8 novos esta semana</p>
+                    <p class="kpi-value"><?php echo $imoveisCadastradosMes ?? 0; ?></p>
+                    <p class="kpi-detail">Novos imóveis adicionados</p>
                 </div>
             </div>
+            
         </div>
 
-        <div class="charts-grid">
+        <div class="quick-actions-grid">
+            <h2 class="dashboard-subtitle">Ações Rápidas</h2>
             
-            <div class="chart-card chart-bar">
-                <h3 class="card-title">Vendas Mensais</h3>
-                <p class="chart-subtitle">Número de imóveis vendidos por mês</p>
-                <div class="chart-area">
-                                    </div>
-            </div>
+            <a href="cadastrar-imovel" class="action-card">
+                <i class="fas fa-plus-square action-icon"></i>
+                <h3 class="action-title">Novo Imóvel</h3>
+                <p class="action-description">Cadastre um novo imóvel no seu portfólio.</p>
+            </a>
 
-            <div class="chart-card chart-line">
-                <h3 class="card-title">Visualizações de Imóveis</h3>
-                <p class="chart-subtitle">Engajamento dos últimos 6 meses</p>
-                <div class="chart-area">
-                                    </div>
-            </div>
+            <a href="mensagens" class="action-card">
+                <i class="fas fa-inbox action-icon"></i>
+                <h3 class="action-title">Caixa de Entrada</h3>
+                <p class="action-description">Visualize e responda todas as suas mensagens.</p>
+            </a>
+
         </div>
     </main>
 

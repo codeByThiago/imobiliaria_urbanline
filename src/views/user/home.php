@@ -93,20 +93,6 @@
                                 <option value="3">3+</option>
                             </select>
                         </div>
-
-                        <div class="checkbox-container">
-                            <div class="form-control">
-                                <input type="checkbox" name="piscina" value="sim">
-                                <label for="piscina">Piscina</label>
-                            </div>
-                            <div class="form-control">
-                                <input type="checkbox" name="suite" id="suite" value="sim">
-                                <label for="suite">Suíte</label>
-                            </div>
-                            <div class="form-control">
-                                <input type="checkbox" name="mobilia" id="mobilia" value="sim">
-                                <label for="mobilia">Mobiliado?</label>
-                        </div>
                         </div>
                     </div>
                 </form>

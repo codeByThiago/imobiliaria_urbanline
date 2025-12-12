@@ -1,0 +1,132 @@
+/*
+ * Estilos para a página de perfil
+ * Arquivo: assets/css/profile.css
+ */
+
+.profile-page {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    min-height: 80vh; /* Garante que a página não seja muito curta */
+}
+
+.profile-card {
+    background-color: var(--bg-secondary);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    width: 100%;
+    max-width: 600px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    border: 1px solid var(--bg-accent-light); /* Borda sutil de luxo */
+}
+
+.profile-header {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--bg-accent);
+    margin-bottom: 20px;
+}
+
+.profile-picture {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--accent-gold);
+    margin-bottom: 10px;
+}
+
+.profile-name {
+    font-family: var(--font-chamativa);
+    color: var(--text-light);
+    margin-bottom: 5px;
+}
+
+.profile-role {
+    color: var(--text-muted);
+    font-size: 0.9em;
+}
+
+.profile-details {
+    margin-bottom: 25px;
+    padding: 10px 0;
+}
+
+.section-title {
+    font-family: var(--font-chamativa);
+    font-size: 1.2em;
+    color: var(--accent-gold);
+    border-bottom: 2px solid var(--bg-accent);
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 1em;
+    color: var(--text-light);
+}
+
+.detail-item i {
+    margin-right: 15px;
+    width: 20px;
+    text-align: center;
+}
+
+.icon-gold {
+    color: var(--accent-gold);
+}
+
+.profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid var(--bg-accent);
+}
+
+.action-button {
+    display: block;
+    padding: 12px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.action-button i {
+    margin-right: 8px;
+}
+
+/* Estilos de Botões */
+.primary-button {
+    background-color: var(--accent-gold);
+    color: var(--bg-dark); /* Texto escuro no botão dourado */
+}
+
+.primary-button:hover {
+    background-color: var(--accent-gold-hover);
+}
+
+.secondary-button {
+    background-color: var(--bg-accent);
+    color: var(--text-light);
+    border: 1px solid var(--bg-accent-light);
+}
+
+.secondary-button:hover {
+    background-color: var(--bg-accent-light);
+}
+
+.logout-button {
+    background-color: #550000; /* Vermelho escuro */
+    color: var(--text-light);
+}
+
+.logout-button:hover {
+    background-color: #770000;
+}

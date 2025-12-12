@@ -66,7 +66,7 @@
                     <div class="input-wrapper">
                         <i class="fa-solid fa-user"></i>
                         <label for="cpf-cnpj" class="sr-only">CPF:</label>
-                        <input type="text" name="cpf" id="cpf" autocomplete="off" required placeholder="CPF">
+                        <input type="text" name="cpf" id="cpf" autocomplete="off" required placeholder="CPF" minlength="14" maxlength="14">
                     </div>
                 </div>
 
@@ -120,7 +120,17 @@
                             <?= $isSocial ? 'readonly' : '' ?>
                         >
                     </div>
-                    <?php if (!$isSocial): // Senha só é obrigatória se não for cadastro social ?>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <label for="role" class="sr-only">Cargo:</label>
+                        <select name="role" id="role"required>
+                            <option value="" disabled selected>Selecione seu cargo</option>
+                            <option value="1">Cliente</option>
+                            <option value="2">Proprietário</option>
+                        </select>
+                    </div>
+
+                    <?php if (!$isSocial):?>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-key"></i>
                         <label for="senha" class="sr-only">Senha:</label>

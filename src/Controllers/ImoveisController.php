@@ -9,6 +9,7 @@ use DAOs\ImovelFotosDAO;
 use DAOs\MensagemDAO;
 use Models\Imovel; 
 use Models\ImovelFotos;
+use Exception;
 
 class ImoveisController {
     private ImoveisDAO $imoveisDAO;
@@ -24,6 +25,149 @@ class ImoveisController {
         $this->enderecoDAO = new EnderecoDAO();
         $this->userDAO = new UserDAO();
         $this->mensagemDAO = new MensagemDAO();
+    }
+    
+    public function dashboard() {
+        
+        $userId = $_SESSION['user_id'];
+        $totalImoveis = $this->imoveisDAO->countImoveisByUser($userId);
+
+        $mensagensNaoLidas = $this->mensagemDAO->countUnreadByDestinatario($userId ?? null);
+        
+        $imoveisDisponiveis = $this->imoveisDAO->countImoveisByStatus($userId, 'disponivel');
+
+        $imoveisCadastradosMes = $this->imoveisDAO->countImoveisCadastradosNoMes($userId);
+        
+        // 3. Renderiza a View
+        renderView('user/dashboard', [
+            'totalImoveis' => $totalImoveis,
+            'totalMensagensNaoLidas' => $mensagensNaoLidas,
+            'imoveisDisponiveis' => $imoveisDisponiveis,
+            'imoveisCadastradosMes' => $imoveisCadastradosMes
+        ]);
+    }
+
+    public function showCadastroImovelForm() {
+        renderView('imovel/cadastro', [
+            'totalMensagensNaoLidas' => $this->mensagemDAO->countUnreadByDestinatario($_SESSION['user_id'] ?? null)
+        ]);
+    }
+    
+    public function imoveisCrud() {
+        renderView('imovel/imoveis', [
+            'imoveis' => $this->imoveisDAO->listAllById($_SESSION['user_id']),
+            'totalMensagensNaoLidas' => $this->mensagemDAO->countUnreadByDestinatario($_SESSION['user_id'] ?? null)
+        ]);
+    }
+
+    public function cadastrarImovel() {
+       
+        $fotos_urls = [];
+        try {
+            $fotos_urls = $this->handleFileUploads($_FILES['fotos'] ?? null);
+
+            $user = $this->userDAO->selectById($_SESSION['user_id']);
+
+            $dadosImovel = [
+                'usuario_id'    => $_SESSION['user_id'],
+                'nome'          => $user['nome'],
+                'tipo_imovel'   => $_POST['tipo_imovel'],
+                'condicao'      => $_POST['condicao'],
+                'valor'         => (float) str_replace(',', '.', $_POST['valor']), 
+                'area'          => (float) str_replace(',', '.', $_POST['area']),
+                
+                'quant_quartos' => (int) ($_POST['quant_quartos'] ?? 0),
+                'quant_suites'  => (int) ($_POST['quant_suites'] ?? 0),
+                'quant_banheiros' => (int) ($_POST['quant_banheiros'] ?? 0),
+                'vagas_garagem' => (int) ($_POST['vagas_garagem'] ?? 0),
+                'quant_piscinas' => (int) ($_POST['quant_piscinas'] ?? 0),
+                'mobiliado'     => (int) ($_POST['mobiliado'] ?? 0),
+                'descricao'     => $_POST['descricao'],
+                'status'        => 'disponivel', // Status inicial
+            ];
+
+            $dadosEndereco = [
+                'cep'           => $_POST['cep'],
+                'logradouro'    => $_POST['logradouro'],
+                'numero'        => $_POST['numero'],
+                'bairro'        => $_POST['bairro'],
+                'cidade'        => $_POST['cidade'],
+                'uf'            => $_POST['uf']
+            ];
+
+            $enderecoId = $this->enderecoDAO->create($dadosEndereco);
+
+            $dadosImovel['endereco_id'] = $enderecoId;
+
+            $imovelId = $this->imoveisDAO->create($dadosImovel); 
+
+            if (!$imovelId) {
+                throw new Exception("Falha ao inserir o imóvel principal no banco.");
+            }
+
+            if (!empty($fotos_urls)) {
+                $this->imoveisDAO->salvarFotos($imovelId, $fotos_urls);
+            }
+
+            $_SESSION['success_message'] = 'Imóvel cadastrado com sucesso! ID: ' . $imovelId;
+            header('Location: /dashboard'); 
+            exit;
+
+        } catch (Exception $e) {
+            throw new Exception("Erro ao cadastrar imóvel " . $e->getMessage());
+        }
+    }
+
+    private function handleFileUploads(?array $files): array {
+        $urls = [];
+
+        if (!$files || empty($files['name'][0])) {
+            return $urls;
+        }
+
+        $total = count($files['name']);
+        
+        // Caminho ABSOLUTO no SERVIDOR (onde o arquivo será salvo)
+        // BASE_DIR + public/uploads/imoveis/
+        $uploadPath = BASE_DIR . "public" . DIRECTORY_SEPARATOR . "assets/" . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "imoveis" . DIRECTORY_SEPARATOR; 
+        
+        // Caminho relativo para salvar no banco (para ser acessado pelo navegador)
+        $public_url_base = "/assets/img/uploads/imoveis/";
+
+
+        // Garantir que a pasta existe (com permissão 0777 em ambiente de desenvolvimento)
+        if (!is_dir($uploadPath)) {
+            // Tenta criar o diretório recursivamente
+            if (!mkdir($uploadPath, 0777, true)) {
+                throw new Exception("Falha ao criar o diretório de upload: " . $uploadPath);
+            }
+        }
+
+        for ($i = 0; $i < $total; $i++) {
+            if ($files['error'][$i] === UPLOAD_ERR_OK) {
+
+                $tempPath = $files['tmp_name'][$i];
+                $extension = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
+                $fileName  = uniqid("imovel_") . "." . $extension;
+
+                $targetPath = $uploadPath . $fileName;
+
+                // Tenta mover o arquivo
+                if (move_uploaded_file($tempPath, $targetPath)) {
+                    // Salva no array a URL pública (para ser usado no HTML, no banco de dados)
+                    $urls[] = $public_url_base . $fileName;
+                } else {
+                    // Se move_uploaded_file falhar, o motivo pode ser permissão (0777)
+                    throw new Exception("Falha ao mover o arquivo. Verifique permissões (chmod) na pasta: " . $uploadPath);
+                }
+
+            } else if ($files['error'][$i] !== UPLOAD_ERR_NO_FILE) {
+                // Este bloco captura UPLOAD_ERR_INI_SIZE (Código 1) ou outros
+                throw new Exception("Erro no upload do arquivo (Código: {$files['error'][$i]}).");
+            }
+        }
+
+        return $urls;
     }
     
     public function search() {
@@ -47,13 +191,20 @@ class ImoveisController {
         // 4. Calcula o total de páginas
         $total_pages = ceil($total_imoveis / self::ITEMS_PER_PAGE);
 
+        $totalMensagensNaoLidas = 0;
+        if (isset($_SESSION['logado']) && $_SESSION['logado'] === TRUE) {
+            // Faça a chamada DAO no Controller e guarde o resultado
+            $totalMensagensNaoLidas = $this->mensagemDAO->countUnreadByDestinatario($_SESSION['user_id'] ?? 0);
+        }
+
         // 5. Renderiza a View
         renderView('imovel/procura-imoveis', [
             'imoveis' => $imoveis, 
             'fotos_por_imovel' => $fotos_por_imovel,
             'filters' => $filters,
             'currentPage' => $page, // Novo
-            'totalPages' => $total_pages // Novo
+            'totalPages' => $total_pages, // Novo
+            'totalMensagensNaoLidas' => $totalMensagensNaoLidas
         ]);
     }
 
@@ -90,7 +241,6 @@ class ImoveisController {
         return array_filter($safeFilters, fn($value) => $value !== null && $value !== '');
     }
 
-    // Função auxiliar (pode ser adicionada dentro da classe ou como método privado)
     private function sanitizeQuantity($value): string|int|null {
         if (in_array($value, ['4+', '3+', '2+'])) {
             return $value; // Mantém a string especial
@@ -101,38 +251,45 @@ class ImoveisController {
     }
 
     public function detalheImovel() {
-       $imovelID = $_GET['id'] ?? null;
-         if ($imovelID === null) {
-              // Redireciona ou mostra erro se o ID não for fornecido
-              header('Location: /search');
-              exit;
-         }
-         
-         // Aqui você pode buscar os detalhes do imóvel usando o ID
-         $imovel = $this->imoveisDAO->selectById($imovelID);
-         
-         if (!$imovel) {
-             // Se o imóvel não for encontrado, redirecione ou mostre um erro
-             header('Location: /search');
-             exit;
-         }
-         
-         // Buscar o endereço do imóvel
-         $endereco = $this->enderecoDAO->selectById($imovel['endereco_id']);
+        $imovelID = $_GET['id'] ?? null;
+        if ($imovelID === null) {
+            // Redireciona ou mostra erro se o ID não for fornecido
+            header('Location: /search');
+            exit;
+        }
+        
+        // Aqui você pode buscar os detalhes do imóvel usando o ID
+        $imovel = $this->imoveisDAO->selectById($imovelID);
+        
+        if (!$imovel) {
+            // Se o imóvel não for encontrado, redirecione ou mostre um erro
+            header('Location: /search');
+            exit;
+        }
+        
+        // Buscar o endereço do imóvel
+        $endereco = $this->enderecoDAO->selectById($imovel['endereco_id']);
 
-         // Buscar fotos do imóvel
-         $fotos = $this->imovelFotosDAO->findByImovelId($imovelID);
+        // Buscar fotos do imóvel
+        $fotos = $this->imovelFotosDAO->findByImovelId($imovelID);
 
-         // Buscar pelo proprietário
-         $proprietario = $this->userDAO->selectById($imovel['usuario_id']);
-         
+        // Buscar pelo proprietário
+        $proprietario = $this->userDAO->selectById($imovel['usuario_id']);
+        
+        $totalMensagensNaoLidas = 0;
+        if (isset($_SESSION['logado']) && $_SESSION['logado'] === TRUE) {
+            // Faça a chamada DAO no Controller e guarde o resultado
+            $totalMensagensNaoLidas = $this->mensagemDAO->countUnreadByDestinatario($_SESSION['user_id'] ?? 0);
+        }
+
          // Renderizar a view com os detalhes do imóvel e suas fotos
-         renderView('imovel/detalhe-imovel', [
-             'imovel' => $imovel,
-             'fotos' => $fotos,
-             'endereco' => $endereco,
-             'proprietario' => $proprietario
-         ]);
+        renderView('imovel/detalhe-imovel', [
+            'imovel' => $imovel,
+            'fotos' => $fotos,
+            'endereco' => $endereco,
+            'proprietario' => $proprietario,
+            'totalMensagensNaoLidas' => $totalMensagensNaoLidas
+        ]);
     }
 
     public function contatoCorretorForm() {
@@ -154,7 +311,7 @@ class ImoveisController {
             'corretor' => $corretor,
             'remetente_nome' => null,
             'remetente_telefone' => null,
-            'remetente_email' => null
+            'remetente_email' => null,
         ];
 
         // 1. Verificar se o corretor é válido para o imóvel
@@ -173,7 +330,16 @@ class ImoveisController {
                 }
             }
 
-            renderView('user/contato/corretor', $data);
+        $totalMensagensNaoLidas = 0;
+        if (isset($_SESSION['logado']) && $_SESSION['logado'] === TRUE) {
+            // Faça a chamada DAO no Controller e guarde o resultado
+            $totalMensagensNaoLidas = $this->mensagemDAO->countUnreadByDestinatario($_SESSION['user_id'] ?? 0);
+        }
+
+        $data['totalMensagensNaoLidas'] = $totalMensagensNaoLidas;
+
+        renderView('user/contato/corretor', $data);
+            
             
         } else {
             $_SESSION['error_message'] = "Corretor inválido para o imóvel selecionado.";

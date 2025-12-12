@@ -19,22 +19,22 @@
                 <p>Para dúvidas gerais, sugestões ou parcerias, envie sua mensagem abaixo.</p>
             </div>
 
-            <form action="/submit-contact" method="POST" class="contact-form">
+            <form action="" method="POST" class="contact-form">
                 <div class="form-control">
                     <label for="nome">Nome Completo</label>
-                    <input type="text" id="nome" name="nome" required>
+                    <input type="text" id="nome" name="nome" required value="<?php echo htmlspecialchars($user['nome'] ?? ''); ?>"<?php echo isset($user['nome']) ? 'disabled' : ''; ?>>
                 </div>
                 <div class="form-control">
                     <label for="email">E-mail</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" required value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>"<?php echo isset($user['email']) ? 'disabled' : ''; ?>>
                 </div>
                 <div class="form-control">
-                    <label for="assunto">Assunto</label>
-                    <select id="assunto" name="assunto">
-                        <option value="duvidas">Dúvidas Gerais</option>
-                        <option value="parceria">Proposta de Parceria</option>
-                        <option value="suporte">Suporte Técnico</option>
-                        <option value="outros">Outros</option>
+                    <label for="titulo">Assunto</label>
+                    <select id="titulo" name="titulo">
+                        <option value="Dúvidas Gerais">Dúvidas Gerais</option>
+                        <option value="Proposta de Parceria">Proposta de Parceria</option>
+                        <option value="Suporte Técnico">Suporte Técnico</option>
+                        <option value="Outros">Outros</option>
                     </select>
                 </div>
                 <div class="form-control">

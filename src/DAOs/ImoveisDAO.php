@@ -13,6 +13,41 @@ class ImoveisDAO extends BaseDAO {
         parent::__construct("imoveis"); // Sua tabela principal é 'imoveis'
     }
 
+    public function listAllById(int $userId): array {
+        $sql = "
+            SELECT 
+                i.id, 
+                i.nome, 
+                i.tipo_imovel, 
+                i.condicao,
+                i.valor, 
+                i.area, 
+                i.status,
+                e.cidade, 
+                e.uf,
+                (SELECT url FROM imoveis_fotos WHERE imovel_id = i.id ORDER BY id ASC LIMIT 1) as foto_principal
+            FROM 
+                imoveis i
+            JOIN 
+                endereco e ON i.endereco_id = e.id
+            WHERE 
+                i.usuario_id = :user_id
+            ORDER BY 
+                i.data_cad DESC
+        ";
+        
+        try {
+            $stmt = $this->conexao->prepare($sql);
+            $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("DAO Error (findByProprietarioWithPrimaryPhoto): " . $e->getMessage());
+            // Em caso de erro, retorna um array vazio para não quebrar a view
+            return []; 
+        }
+    }
+
     public function findWithPrimaryPhoto(array $filters, int $limit, int $offset): array {
         
         // --- 1. Construção da cláusula WHERE e Bindings (REUTILIZÁVEL) ---
@@ -130,6 +165,34 @@ class ImoveisDAO extends BaseDAO {
         }
     }
 
+    public function salvarFotos(int $imovelId, array $fotos): bool {
+        if (empty($fotos)) {
+            return true;
+        }
+
+        // Prepara a consulta de inserção para a tabela 'imovel_fotos'
+        $sql = "INSERT INTO imovel_fotos (imovel_id, url) VALUES (:imovel_id, :url)";
+        
+        try {
+            $this->conexao->beginTransaction();
+            $stmt = $this->conexao->prepare($sql);
+
+            foreach ($fotos as $url) {
+                $stmt->bindValue(':imovel_id', $imovelId, PDO::PARAM_INT);
+                $stmt->bindValue(':url', $url, PDO::PARAM_STR);
+                $stmt->execute();
+            }
+
+            $this->conexao->commit();
+            return true;
+
+        } catch (PDOException $e) {
+            $this->conexao->rollBack();
+            // Lançar exceção para ser tratada no Controller
+            throw new Exception("Erro ao salvar as fotos: " . $e->getMessage());
+        }
+    }
+
     private function addQuantityFilter(array &$whereClauses, array &$bindings, array $filters, string $filterKey, string $columnName): void {
         if (isset($filters[$filterKey]) && !empty($filters[$filterKey])) { // Adicionado !empty()
             $filterValue = $filters[$filterKey];
@@ -150,9 +213,6 @@ class ImoveisDAO extends BaseDAO {
         }
     }
 
-    /**
-     * Converte a string de faixa de valor (ex: '300k-500k') para [min, max]
-     */
     private function parseValueRange(string $range): array {
         if ($range === '1m+') {
             return [1000000, null];
@@ -197,6 +257,60 @@ class ImoveisDAO extends BaseDAO {
             return $stmt->fetchColumn() > 0;
         } catch (PDOException $e) {
             throw new Exception("Erro ao verificar proprietário do imóvel: " . $e->getMessage());
+        }
+    }
+
+    public function countImoveisByUser(int $userId): int {
+        $sql = "SELECT COUNT(id) FROM imoveis WHERE usuario_id = :user_id";
+        
+        try {
+            $stmt = $this->conexao->prepare($sql);
+            $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            // Retorna o resultado da contagem (primeira coluna da primeira linha)
+            return (int)$stmt->fetchColumn(); 
+
+        } catch (PDOException $e) {
+            // Em ambiente de produção, logar o erro em vez de exibi-lo
+            error_log("Erro ao contar imóveis: " . $e->getMessage());
+            return 0;
+        }
+    }
+    
+    public function countImoveisByStatus(int $userId, string $status): int {
+        $sql = "SELECT COUNT(id) FROM imoveis WHERE usuario_id = :user_id AND status = :status";
+        
+        try {
+            $stmt = $this->conexao->prepare($sql);
+            $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+            $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+            $stmt->execute();
+            
+            return (int)$stmt->fetchColumn();
+        } catch (PDOException $e) {
+            error_log("Erro ao contar imóveis por status: " . $e->getMessage());
+            return 0;
+        }
+    }
+    
+    
+    public function countImoveisCadastradosNoMes(int $userId): int {
+        // Usa as funções de data do MySQL/SQLite para filtrar pelo mês e ano atuais
+        $sql = "SELECT COUNT(id) FROM imoveis 
+                WHERE usuario_id = :user_id 
+                AND MONTH(data_cad) = MONTH(CURRENT_DATE())
+                AND YEAR(data_cad) = YEAR(CURRENT_DATE())";
+        
+        try {
+            $stmt = $this->conexao->prepare($sql);
+            $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return (int)$stmt->fetchColumn();
+        } catch (PDOException $e) {
+            error_log("Erro ao contar cadastros mensais: " . $e->getMessage());
+            return 0;
         }
     }
 }

@@ -112,7 +112,7 @@ body.inicial .form-container {
 }
 
 /* (Seus estilos .alert-sucess e .alert-error permanecem os mesmos) */
-.alert-sucess {
+.alert-success {
   background-color: green;
   color: white;
 }

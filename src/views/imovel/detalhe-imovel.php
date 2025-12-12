@@ -19,7 +19,7 @@
                 <div class="fotos-wrapper">
                     <?php if (!empty($fotos)) {
                         foreach ($fotos as $imovel_foto) { ?>
-                            <img src="assets/img/full/<?= $imovel_foto['url']?>" alt="Foto do Imóvel" class="imovel-foto">
+                            <img src="<?= $imovel_foto['url']?>" alt="Foto do Imóvel" class="imovel-foto">
                         <?php }
                     } else { ?>
                         <img src="assets/img/placeholder.png" alt="Sem fotos disponíveis" class="imovel-foto">
@@ -79,7 +79,7 @@
                             $foto_proprietario = $proprietario['picture'] ?: 'default-user.jpg';
                         ?>
                         
-                        <img src="assets/img/icones/<?= $foto_proprietario ?>" alt="Foto do Proprietário">
+                        <img src="assets/img/icones/default-user.jpg" alt="Foto do Proprietário">
                         
                         <div class="proprietario-details">
                             <p>**Nome:** <span><?= $proprietario['nome']?></span></p>

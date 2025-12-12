@@ -38,6 +38,7 @@ class AuthController {
         
         if ($user && password_verify($senha, $user['senha'])) {
             $_SESSION['logado'] = TRUE;
+            $_SESSION['role_id'] = $user['role_id'];
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['nome'];
             $_SESSION['user_picture'] = 'assets/uploads/user/' . $user['picture'] ?? null;
@@ -80,21 +81,19 @@ class AuthController {
         // de um hash VAZIO ou de um valor NULO, dependendo do seu modelo User.
         // Usaremos um hash vazio (um valor seguro) para contas sociais, 
         // ou a senha se for local.
-        $senha_post = $_POST['senha'] ?? null;
-        $senha_final = $isSocial ? 'SOCIAL_ACCOUNT' : $senha_post; 
 
         // O Model User deve lidar com o hash, mas passamos a senha/marcador
+        
         $userData = [
             'nome' => $_POST['nome'] ?? '',
             'email' => $_POST['email'] ?? '',
-            // Use a senha normal para local, ou o marcador para social (o Model User lida com isso)
-            'senha' => $senha_final, 
+            'senha' => $_POST['senha'] ?? '', 
             'telefone' => $_POST['telefone'] ?? '',
             'cpf' => $_POST['cpf'] ?? '',
-            'role_id' => 1,
+            'role_id' => $_POST['role'],
             'auth_type' => $_POST['auth_type'] ?? 'local',
-            'google_id' => $_POST['google_id'] ?? null, // Recebe do campo hidden
-            'picture' => $_POST['picture'] ?? null // Recebe do campo hidden
+            'google_id' => $_POST['google_id'] ?? null,
+            'picture' => $_POST['picture'] ?? null
         ];
 
         $enderecoData = [
@@ -119,6 +118,7 @@ class AuthController {
             unset($_SESSION['social_register_data']);
             $_SESSION['sucess_message'] = 'Cadastro realizado com sucesso!';
             $_SESSION['logado'] = TRUE;
+            $_SESSION['role_id'] = $user->getRoleId();
             $_SESSION['user_id'] = $user->getId();
             $_SESSION['user_picture'] = $user->getPicture() ?? null;
             $_SESSION['username'] = $user->getNome();
@@ -177,6 +177,7 @@ class AuthController {
                 // 2. Faz login (pode ser necessário buscar o usuário atualizado)
                 $user = $this->userDAO->getByEmail($googleUser['email']);
                 $_SESSION['logado'] = TRUE;
+                $_SESSION['role_id'] = $user['role_id'];
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['nome'];
                 $_SESSION['user_picture'] = $user['picture'] ?? null;

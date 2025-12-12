@@ -202,7 +202,7 @@
                 ?>
                 <div class="card-imovel">
                     <?php if (!empty($fotoUrl)): ?>
-                        <img src="assets/img/full/<?= htmlspecialchars($fotoUrl) ?>" alt="Foto principal do imóvel" loading="lazy">
+                        <img src="<?= htmlspecialchars($fotoUrl) ?>" alt="Foto principal do imóvel" loading="lazy">
                     <?php endif; ?>
                     <div class="info">
                         <h3><?= htmlspecialchars($imovel['nome'])?></h3> 
@@ -252,3 +252,4 @@
     <?php include VIEWS . 'includes/footer.php';?>
 </body>
 </html>
+
