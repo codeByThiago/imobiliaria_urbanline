@@ -118,6 +118,64 @@ class ImoveisController {
         }
     }
 
+    // Arquivo: ImoveisController.php
+
+    public function deletaImovel() {
+        
+        // 1. Verificação de Autenticação e ID
+        if (!isset($_SESSION['user_id'])) {
+            $_SESSION['error_message'] = 'Acesso negado. Você precisa estar logado.';
+            header('Location: /login');
+            exit;
+        }
+
+        // 2. Obter o ID do imóvel da URL (GET)
+        $imovelId = $_GET['id'] ?? null;
+        
+        if (!$imovelId || !is_numeric($imovelId)) {
+            $_SESSION['error_message'] = 'ID do imóvel inválido.';
+            header('Location: /imoveis-proprietario');
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'];
+        
+        // Início da Lógica de Exclusão
+        try {
+            
+            // --- 3. VERIFICAÇÃO DE PROPRIEDADE (SEGURANÇA CRÍTICA!) ---
+            
+            // Presumo que você tenha um método no ImoveisDAO para buscar o imóvel pelo ID.
+            $imovel = $this->imoveisDAO->selectById($imovelId); 
+
+            if (!$imovel) {
+                throw new Exception("Imóvel não encontrado.");
+            }
+
+            // Garante que o usuário logado é o proprietário real do imóvel
+            if ($imovel['usuario_id'] != $userId) {
+                // Este é um ataque de acesso não autorizado, deve ser rigoroso
+                throw new Exception("Você não tem permissão para deletar este imóvel.");
+            }
+            
+            $this->imoveisDAO->delete($imovelId);     // Deleta o imóvel
+            
+            // Deleta o endereço associado
+            $this->enderecoDAO->delete($imovel['endereco_id']); 
+            
+            // 6. SUCESSO
+            $_SESSION['success_message'] = 'Imóvel deletado com sucesso.';
+            header('Location: /imoveis-proprietario');
+            exit;
+            
+        } catch (Exception $e) {
+            error_log("Erro ao deletar imóvel (ID {$imovelId}): " . $e->getMessage());
+            $_SESSION['error_message'] = "Erro ao deletar imóvel: " . $e->getMessage();
+            header('Location: /imoveis-proprietario');
+            exit;
+        }
+    }
+
     private function handleFileUploads(?array $files): array {
         $urls = [];
 

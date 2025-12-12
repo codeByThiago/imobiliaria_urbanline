@@ -64,9 +64,6 @@
                         </div>
 
                         <div class="imovel-actions">
-                            <a href="editar-imovel?id=<?php echo $imovel['id']; ?>" class="btn btn-edit" title="Editar Imóvel">
-                                <i class="fas fa-edit"></i> Editar
-                            </a>
                             <a href="detalhes-imovel?id=<?php echo $imovel['id']; ?>" class="btn btn-view" title="Ver Anúncio">
                                 <i class="fas fa-eye"></i> Visualizar
                             </a>

@@ -153,12 +153,21 @@ try {
                 $_SESSION['error_message'] = 'Você precisa ser um proprietário para acessar o dashboard';
                 header('Location: /');
             }
-
-            if($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $imoveisController->cadastrarImovel();
-            } else {
-                $imoveisController->imoveisCrud();
+            
+            $imoveisController->imoveisCrud();
+            break;
+        case 'excluir-imovel':
+            if(!isset($_SESSION['user_id'])) {
+                $_SESSION['error_message'] = "Você precisa estar logado para acessar o dashboard";
+                header('Location: /');
             }
+
+            if($_SESSION['role_id'] === 1) {
+                $_SESSION['error_message'] = 'Você precisa ser um proprietário para acessar o dashboard';
+                header('Location: /');
+            }
+
+            $imoveisController->deletaImovel();
             break;
         default:
             $userController->errorPage404();

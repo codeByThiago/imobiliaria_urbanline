@@ -250,14 +250,13 @@
     }
 }
 
-        /* ------------------------------------------- */
-/* Estilos para a página Imóveis do Proprietário */
+/* ------------------------------------------- */
+/* Estilos para a página Imóveis do Proprietário - CORES AJUSTADAS PARA O ROOT */
 /* ------------------------------------------- */
 
-/* Layout da Grid de Imóveis */
+/* Layout da Grid de Imóveis (Mantido) */
 .imoveis-grid {
     display: grid;
-    /* Adaptação: exibe no mínimo 300px por coluna, auto-ajustável */
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 30px;
     margin-top: 30px;
@@ -265,8 +264,10 @@
 
 /* Card Individual do Imóvel */
 .imovel-card-owner {
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
+    /* CORRIGIDO: Usando variável de fundo de card */
+    background: var(--bg-secondary);
+    /* CORRIGIDO: Usando variável de borda/acento */
+    border: 1px solid var(--bg-accent-light); 
     border-radius: 12px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
     overflow: hidden;
@@ -275,30 +276,27 @@
     flex-direction: column;
 }
 
+/* Efeito de Hover (Mantido) */
 .imovel-card-owner:hover {
     transform: translateY(-8px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Cabeçalho e Thumbnail */
+/* Cabeçalho, Thumbnail e Status (Mantido) */
 .imovel-header {
     position: relative;
     height: 200px;
     overflow: hidden;
 }
-
 .imovel-thumbnail {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
 }
-
 .imovel-card-owner:hover .imovel-thumbnail {
     transform: scale(1.05);
 }
-
-/* Status (Disponível/Vendido) */
 .imovel-status {
     position: absolute;
     top: 15px;
@@ -312,39 +310,44 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* Usando as variáveis de status do :root */
 .status-disponivel {
-    background-color: #28a745; /* Verde */
+    background-color: var(--status-disponivel); /* limegreen */
 }
-
 .status-vendido {
-    background-color: #dc3545; /* Vermelho */
+    background-color: var(--status-vendido); /* red */
 }
+/* Se houver "alugado" use: */
+/* .status-alugado { background-color: var(--status-alugado); } */
 
 /* Detalhes do Imóvel */
 .imovel-details {
     padding: 15px 20px;
-    flex-grow: 1; /* Garante que os detalhes ocupem o espaço restante */
+    flex-grow: 1;
 }
 
 .imovel-title {
     font-size: 1.4em;
     margin-top: 0;
     margin-bottom: 5px;
-    color: #343a40;
+    /* CORRIGIDO: Usando variável de texto principal */
+    color: var(--text-light); 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .imovel-location {
-    color: #6c757d;
+    /* CORRIGIDO: Usando variável de texto secundário */
+    color: var(--text-muted); 
     font-size: 0.9em;
     margin-bottom: 15px;
 }
 
 .imovel-location i {
     margin-right: 5px;
-    color: #007bff;
+    /* CORRIGIDO: Usando variável de destaque para o ícone */
+    color: var(--accent-gold); 
 }
 
 .imovel-info-row {
@@ -353,18 +356,21 @@
     gap: 15px;
     margin-bottom: 15px;
     font-size: 0.9em;
-    color: #555;
+    /* CORRIGIDO: Usando variável de texto secundário */
+    color: var(--text-muted); 
 }
 
 .info-item i {
     margin-right: 5px;
-    color: #6c757d;
+    /* CORRIGIDO: Usando variável de texto secundário para ícones internos */
+    color: var(--text-muted); 
 }
 
 .imovel-price {
     font-size: 1.6em;
     font-weight: 800;
-    color: #29b6f6; /* Azul Claro/Ciano para valor */
+    /* CORRIGIDO: Usando variável de destaque para o preço */
+    color: var(--accent-gold-hover); 
     margin-bottom: 15px;
 }
 
@@ -373,8 +379,9 @@
     display: flex;
     justify-content: space-between;
     padding: 15px 20px;
-    border-top: 1px solid #f0f0f0;
-    background-color: #f8f9fa;
+    /* CORRIGIDO: Usando variáveis de borda e fundo leve */
+    border-top: 1px solid var(--bg-accent-light);
+    background-color: var(--bg-accent); 
 }
 
 .imovel-actions a {
@@ -384,24 +391,25 @@
     font-size: 0.9em;
     font-weight: 600;
     transition: background-color 0.2s, color 0.2s;
-    flex-basis: 30%; /* Distribui os botões de forma mais uniforme */
+    flex-basis: 30%;
     text-align: center;
 }
 
-.imovel-actions i {
-    margin-right: 5px;
-}
+/* NOTA: Mantive as cores fixas nos botões de CRUD (edit/view/delete) 
+   para garantir que eles tenham um significado visual claro (Amarelo, Ciano, Vermelho)
+   independentemente do tema (Dark/Light). Se você quiser que eles sigam o tema,
+   crie variáveis de cor específicas para ações de CRUD no :root. */
 
 .btn-edit {
-    background-color: #ffc107; /* Amarelo */
-    color: #343a40;
+    background-color: #ffc107; /* Amarelo (Ação neutra) */
+    color: var(--text-light); /* Cor do texto no botão */
 }
 .btn-edit:hover {
     background-color: #e0a800;
 }
 
 .btn-view {
-    background-color: #17a2b8; /* Ciano/Info */
+    background-color: #17a2b8; /* Ciano (Ação de visualização) */
     color: white;
 }
 .btn-view:hover {
@@ -409,7 +417,7 @@
 }
 
 .btn-delete {
-    background-color: #dc3545; /* Vermelho */
+    background-color: #dc3545; /* Vermelho (Ação perigosa) */
     color: white;
 }
 .btn-delete:hover {
@@ -420,20 +428,23 @@
 .no-results-message {
     text-align: center;
     padding: 50px 20px;
-    border: 2px dashed #ccc;
+    /* CORRIGIDO: Usando variáveis de acento e texto */
+    border: 2px dashed var(--text-muted); 
     border-radius: 10px;
     margin-top: 40px;
 }
 
 .no-results-message i {
     font-size: 3em;
-    color: #adb5bd;
+    /* CORRIGIDO: Usando variável de texto secundário */
+    color: var(--text-muted); 
     margin-bottom: 15px;
 }
 
 .no-results-message p {
     font-size: 1.2em;
-    color: #6c757d;
+    /* CORRIGIDO: Usando variável de texto secundário */
+    color: var(--text-muted); 
     margin-bottom: 20px;
 }
 
@@ -443,13 +454,16 @@
 }
 
 .btn-primary {
-    /* Estilo do botão primário (se não estiver em style.css) */
-    background-color: #007bff;
-    color: white;
+    /* Manter estilo para o botão primário, garantindo cor do tema */
+    background-color: var(--accent-gold);
+    color: var(--bg-dark); /* Texto escuro no botão dourado */
     padding: 10px 20px;
     border-radius: 5px;
     text-decoration: none;
     display: inline-block;
     font-weight: 600;
+    transition: background-color 0.2s;
 }
-
+.btn-primary:hover {
+     background-color: var(--accent-gold-hover);
+}

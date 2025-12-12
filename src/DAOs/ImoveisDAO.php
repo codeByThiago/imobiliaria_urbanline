@@ -25,7 +25,7 @@ class ImoveisDAO extends BaseDAO {
                 i.status,
                 e.cidade, 
                 e.uf,
-                (SELECT url FROM imoveis_fotos WHERE imovel_id = i.id ORDER BY id ASC LIMIT 1) as foto_principal
+                (SELECT url FROM imovel_fotos WHERE imovel_id = i.id ORDER BY id ASC LIMIT 1) as foto_principal
             FROM 
                 imoveis i
             JOIN 
